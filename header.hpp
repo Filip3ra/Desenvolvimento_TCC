@@ -19,7 +19,7 @@ using namespace std;
 // Neighbor: Schedule + move that created the neighbor
 #define Neighbor pair<Schedule, vector<int>>
 
-class JIT_JSS
+class JIT
 {
 
   // operations start from 1
@@ -45,7 +45,7 @@ public:
   // machine[i] = machine of op i (machine index starts from 0)
   vector<int> machine;
   // jobOps[i] = operations of job i
-  matriz jobOps;
+  vector<vector<int>> jobOps;
   // machineOps[i] = operations of machine i
   matriz machineOps;
   // processingOrder[i] = processing order of job i

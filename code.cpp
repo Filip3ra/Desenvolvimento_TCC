@@ -2,7 +2,13 @@
 
 using namespace std;
 
-vector<double> JIT_JSS::readLine(string line)
+/*  Converte cada linha contendo valores em um double,
+    adiciona em numbers. Cada linha do arquivo representa
+    um job e suas operações, onde cada uma tem 5 valores:
+    máquina, tempo processamento, data entrega, antecipaçã e atraso.
+    Lê uma linha por chamada.
+*/
+vector<double> JIT::readLine(string line)
 {
   vector<double> numbers;
   stringstream ss;
@@ -24,12 +30,12 @@ vector<double> JIT_JSS::readLine(string line)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void JIT_JSS::parseInstance(string path)
+void JIT::parseInstance(string path)
 {
   ifstream file(path);
   if (!file.is_open())
   {
-    cout << "FILE COULDNT BE OPENED\n";
+    cout << "Arquivo não pode ser aberto\n";
     abort();
   }
 
@@ -38,11 +44,12 @@ void JIT_JSS::parseInstance(string path)
   getline(file, line);
   numbers = readLine(line);
 
+  // Cabeçalho, num de jobs e maquinas
   nJobs = (int)numbers[0];
   nMachines = (int)numbers[1];
 
   nOperations = nJobs * nMachines;
-  // resizing operation vectors with nOperations + 1 because the operations start from 1
+  // resize necessário pois as operações começam em 1 e não em 0
   processingTime.resize(nOperations + 1);
   dueDate.resize(nOperations + 1);
   earliness.resize(nOperations + 1);
@@ -50,7 +57,7 @@ void JIT_JSS::parseInstance(string path)
   job.resize(nOperations + 1);
   machine.resize(nOperations + 1);
 
-  // machine and job start from 0
+  // jobs e máquinas começam de 0
   jobOps.resize(nJobs);
   machineOps.resize(nMachines);
 
@@ -58,21 +65,22 @@ void JIT_JSS::parseInstance(string path)
   int jobID = 0;
   while (getline(file, line))
   {
-    numbers = readLine(line);
+    numbers = readLine(line); // Cada linha é um job
     vector<int> _job;
     for (int i = 0; i < numbers.size(); i += 5)
     {
+      // Leio 5 valores de uma op e incremento pra próxima op
       int opmachine = (int)numbers[i];
       int opprocessingtime = (int)numbers[i + 1];
       int opduedate = (int)numbers[i + 2];
       double opearliness = numbers[i + 3];
       double optardiness = numbers[i + 4];
+
       job[opID] = jobID;
       machine[opID] = opmachine;
       processingTime[opID] = opprocessingtime;
       dueDate[opID] = opduedate;
       earliness[opID] = opearliness;
-      // earliness[opID] = 0;
       tardiness[opID] = optardiness;
 
       _job.push_back(opID);
@@ -91,7 +99,7 @@ void JIT_JSS::parseInstance(string path)
 
 ///////////////////////////////////////////////////////////////
 
-void JIT_JSS::printInstance()
+void JIT::printInstance()
 {
   cout << "n jobs:" << nJobs << ",nMachines:" << nMachines << endl;
 

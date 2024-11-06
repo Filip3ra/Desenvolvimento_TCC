@@ -7,13 +7,13 @@ int main(int argc, char **argv)
 
   if (argc == 0)
   {
-    cout << "Arguments where not provided\n";
+    cout << "Missing arguments\n";
     return -1;
   }
 
   string file_path(argv[1]);
 
-  JIT_JSS j;
+  JIT j;
 
   j.parseInstance(file_path);
   j.printInstance();
