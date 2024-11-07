@@ -47,9 +47,9 @@ public:
   // jobOps[i] = operations of job i
   vector<vector<int>> jobOps;
   // machineOps[i] = operations of machine i
-  matriz machineOps;
+  vector<vector<int>> machineOps;
   // processingOrder[i] = processing order of job i
-  matriz processingOrder;
+  vector<vector<int>> processingOrder;
 
   vector<double> readLine(string line);
 

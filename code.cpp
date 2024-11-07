@@ -30,6 +30,9 @@ vector<double> JIT::readLine(string line)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+/* parseInstance() irá organizar os dados da entrada num objeto "j" que acessa diversos
+vetores e matrizes diferentes. Um vetor só para os tempos de processamento, outro só para
+penalidades de adiantamento, e assim por diante. */
 void JIT::parseInstance(string path)
 {
   ifstream file(path);
@@ -44,7 +47,7 @@ void JIT::parseInstance(string path)
   getline(file, line);
   numbers = readLine(line);
 
-  // Cabeçalho, num de jobs e maquinas
+  // Cabeçalho, número de jobs e maquinas
   nJobs = (int)numbers[0];
   nMachines = (int)numbers[1];
 
@@ -70,6 +73,7 @@ void JIT::parseInstance(string path)
     for (int i = 0; i < numbers.size(); i += 5)
     {
       // Leio 5 valores de uma op e incremento pra próxima op
+      // Faço a conversão pra variáveis temporárias
       int opmachine = (int)numbers[i];
       int opprocessingtime = (int)numbers[i + 1];
       int opduedate = (int)numbers[i + 2];
@@ -90,8 +94,8 @@ void JIT::parseInstance(string path)
 
       opID++;
     }
-    processingOrder.push_back(_job);
-    jobID++;
+    processingOrder.push_back(_job); // Salva a ordem de processamento da op
+    jobID++;                         // depois de ler uma linha, ou seja, um job, vou pro próximo
   }
 
   file.close();
