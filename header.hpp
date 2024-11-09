@@ -57,3 +57,5 @@ public:
 
   void printInstance();
 };
+
+void brkga(JIT j);
