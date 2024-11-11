@@ -58,4 +58,4 @@ public:
   void printInstance();
 };
 
-void brkga(JIT j);
+void brkga(JIT &j);

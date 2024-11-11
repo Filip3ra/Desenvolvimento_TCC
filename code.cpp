@@ -109,10 +109,11 @@ void JIT::printInstance()
 
   for (int i = 0; i < processingOrder.size(); i++)
   {
-    cout << "job " << i << ":\n";
+    cout << "job " << i + 1 << ":\n";
     for (int j = 0; j < processingOrder[i].size(); j++)
     {
       int op = processingOrder[i][j];
+      // cout << "id: " << op << endl;
       cout << machine[op] << ' ' << processingTime[op] << ' ' << dueDate[op] << ' ' << earliness[op] << ' ' << tardiness[op] << endl;
     }
     cout << endl;
