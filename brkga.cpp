@@ -7,120 +7,128 @@
 
 using namespace std;
 
-void brkga(JIT &j)
+void brkga(JIT &j, int N)
+{
+  // vector<vector<int>> population = GeneratePopulation(j, N);
+  Fitness(j, GeneratePopulation(j, N));
+}
+
+// Função para gerar a população com N indivíduos
+vector<vector<int>> GeneratePopulation(JIT &j, int N)
 {
   int sizeVet = j.nJobs * j.nMachines;
+  vector<vector<int>> population;
 
-  vector<int> jobsVet(sizeVet);
-  vector<double> randomVet(sizeVet);
+  srand(static_cast<unsigned int>(time(0))); // Inicializar a semente para valores aleatórios
 
-  int index = 0;
-
-  // Preencher o jobsVet
-  for (int job = 1; job <= j.nJobs; job++)
+  // Gerar N variações de jobsVet e adicionar a population
+  for (int n = 0; n < N; n++)
   {
-    for (int machine = 0; machine < j.nMachines; machine++)
+    vector<int> jobsVet(sizeVet);
+    vector<double> randomVet(sizeVet);
+
+    int index = 0;
+
+    // Preencher o jobsVet com jobs repetidos j.nMachines vezes
+    for (int job = 1; job <= j.nJobs; job++)
     {
-      jobsVet[index++] = job;
+      for (int machine = 0; machine < j.nMachines; machine++)
+      {
+        jobsVet[index++] = job;
+      }
     }
+
+    // Preencher randomVet com valores entre 0 e 1 com 3 casas decimais
+    for (int i = 0; i < sizeVet; i++)
+    {
+      randomVet[i] = static_cast<double>(rand() % 1001) / 1000.0;
+    }
+
+    // Associar jobsVet e randomVet usando um vetor de pares
+    vector<pair<double, int>> pairedVet(sizeVet);
+    for (int i = 0; i < sizeVet; i++)
+    {
+      pairedVet[i] = make_pair(randomVet[i], jobsVet[i]);
+    }
+
+    // Ordenar o vetor de pares com base no valor de randomVet (primeiro elemento do par)
+    sort(pairedVet.begin(), pairedVet.end());
+
+    // Separar novamente os vetores randomVet e jobsVet ordenados
+    for (int i = 0; i < sizeVet; i++)
+    {
+      randomVet[i] = pairedVet[i].first;
+      jobsVet[i] = pairedVet[i].second;
+    }
+
+    // Adicionar o jobsVet ordenado a population
+    population.push_back(jobsVet);
   }
 
-  // Inicializar semente para valores aleatórios
-  srand(static_cast<unsigned int>(time(0)));
-
-  // Preencher randomVet com valores entre 0 e 1 com 3 casas decimais
-  for (int i = 0; i < sizeVet; i++)
-  {
-    randomVet[i] = static_cast<double>(rand() % 1001) / 1000.0;
-  }
-
-  // Associar jobsVet e randomVet usando um vetor de pares
-  vector<pair<double, int>> pairedVet(sizeVet);
-  for (int i = 0; i < sizeVet; i++)
-  {
-    pairedVet[i] = make_pair(randomVet[i], jobsVet[i]);
-  }
-
-  // Ordenar o vetor de pares com base no valor de randomVet (primeiro elemento do par)
-  sort(pairedVet.begin(), pairedVet.end());
-
-  // Separar novamente os vetores randomVet e jobsVet ordenados
-  for (int i = 0; i < sizeVet; i++)
-  {
-    randomVet[i] = pairedVet[i].first;
-    jobsVet[i] = pairedVet[i].second;
-  }
-
-  // Vetor para armazenar as operações ordenadas
-  // vector<int> scheduledOps(sizeVet);
-
-  // Contador para acompanhar a próxima operação a ser atribuída para cada job
-  // vector<int> jobCounters(j.nJobs, 0);
-
-  // Criar o vetor de pares <job, operação>
-  vector<pair<int, int>> jobOperationPairs(sizeVet);
-  vector<int> jobCounters(j.nJobs, 0);
-  vector<int> v;
-  int indexOp = 0;
-  for (int i = 0; i < sizeVet; i++)
-  {
-
-    int currentJob = jobsVet[i] - 1; // índice zero
-    cout << "current job: " << currentJob << endl;
-    v = j.processingOrder[currentJob];
-    int operation = v[indexOp];
-    ++indexOp;
-
-    jobOperationPairs[i] = make_pair(jobsVet[i], operation);
-    jobCounters[currentJob]++;
-  }
-
-  // Imprimir o vetor de pares <job, operação>
-  cout << "Vetor de pares <job, operacao>: ";
-  for (const auto &pair : jobOperationPairs)
-  {
-    cout << "<" << pair.first << "," << pair.second << "> ";
-  }
-  cout << endl;
-
-  // Imprimir o resultado do agendamento
-  /*
-  cout << "Ordem de randomVet (ordenado): ";
-  for (double r : randomVet)
-    cout << r << " ";
-
-*/
-  cout << "\nOrdem de jobsVet (ordenado): ";
-  for (int j : jobsVet)
-    cout << j << " ";
-
-  /*
-   cout << "\nOrdem de operações agendadas: ";
-   for (int op : scheduledOps)
-     cout << op << " ";
-   cout << endl;
-   */
-
-  /*
-      // Exibir randomVet e jobsVet ordenados
-      cout << "Vetor randomVet ordenado: [";
-      cout << fixed << setprecision(3);
-      for (int i = 0; i < sizeVet; i++)
-      {
-        cout << randomVet[i];
-        if (i < sizeVet - 1)
-          cout << ", ";
-      }
-      cout << "]" << endl;
-
-      cout << "Vetor jobsVet ordenado: [";
-      for (int i = 0; i < sizeVet; i++)
-      {
-        cout << jobsVet[i];
-        if (i < sizeVet - 1)
-          cout << ", ";
-      }
-      cout << "]" << endl;
-
-  */
+  return population;
 }
+
+void Fitness(JIT &j, vector<vector<int>> population)
+{
+  int sizeVet = j.nJobs * j.nMachines;
+  int op1, op2 = 0;
+  vector<int> jobsVet;
+  int sizePopulaion = population.size();
+
+  for (int i = 0; i < sizePopulaion; i++)
+  {
+
+    cout << "ind " << i + 1 << ": [";
+    // indivíduo i
+    jobsVet = population[i];
+    // elementos do indivíduo i
+    for (int j : jobsVet)
+      cout << j << " ";
+
+    cout << "] " << endl;
+    cout << "p = " << i << endl;
+
+    op1 = j.processingOrder[jobsVet[i] - 1][0];
+    op2 = j.processingOrder[jobsVet[i] - 1][1];
+
+    // int currentJob = jobsVet[i] - 1; // índice zero
+    cout << "job " << jobsVet[i] << ": <" << op1 << ", " << op2 << ">"
+         << " op1: " << j.machine[op1]
+         << " processing time: " << j.processingTime[op1]
+         << " op2: " << j.machine[op2]
+         << " processing time: " << j.processingTime[op2]
+         << "\n\n";
+  }
+}
+
+/*
+// IMPRIMIR PARES EM processingOder
+  int op1, op2 = 0;
+  for (int i = 0; i < sizeVet; i++)
+  {
+    op1 = j.processingOrder[jobsVet[i] - 1][0];
+    op2 = j.processingOrder[jobsVet[i] - 1][1];
+
+    // int currentJob = jobsVet[i] - 1; // índice zero
+    cout << "job " << jobsVet[i] << ": " << op1 << ", " << op2
+         << " operation: " << j.machine[op1]
+         << " processing time: " << j.processingTime[op1]
+         << " operation: " << j.machine[op2]
+         << " processing time: " << j.processingTime[op2]
+         << endl;
+  }
+
+
+
+// Imprimir population
+cout << "Population (N=" << N << "):" << endl;
+for (int i = 0; i < N; i++)
+{
+  cout << "Variacao " << i + 1 << ": [ ";
+  for (int j = 0; j < sizeVet; j++)
+  {
+    cout << population[i][j] << " ";
+  }
+  cout << "]" << endl;
+}
+*/

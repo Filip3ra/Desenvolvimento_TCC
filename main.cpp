@@ -17,5 +17,5 @@ int main(int argc, char **argv)
 
   j.parseInstance(file_path);
   j.printInstance();
-  brkga(j);
+  brkga(j, 10);
 }

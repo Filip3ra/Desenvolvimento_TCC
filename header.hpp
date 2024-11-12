@@ -58,4 +58,6 @@ public:
   void printInstance();
 };
 
-void brkga(JIT &j);
+void brkga(JIT &j, int N);
+vector<vector<int>> GeneratePopulation(JIT &j, int N);
+void Fitness(JIT &j, vector<vector<int>> population);
