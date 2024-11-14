@@ -115,13 +115,16 @@ void Fitness(JIT &j, vector<vector<int>> population)
       // Acumular penalidade no custo total
       totalCost += penaltyCost;
 
+      // FUTURAMENTE SERÁ NECESSÁRIO UMA OTIMIZAÇÃO AQUI
+
       // Exibir detalhes para cada operação
-      cout << "Job " << currentJob + 1 << " - Operacao " << opIndex + 1
-           << ": Machine " << machine << ", Start " << startTime
-           << ", Completion " << completionTime
-           << ", Earliness " << earliness
-           << ", Tardiness " << tardiness
-           << ", Penalty Cost " << penaltyCost << endl;
+      cout
+          << "Job " << currentJob + 1 << " - Operacao " << opIndex + 1
+          << ": Machine " << machine << ", Start " << startTime
+          << ", Completion " << completionTime
+          << ", Earliness " << earliness
+          << ", Tardiness " << tardiness
+          << ", Penalty Cost " << penaltyCost << endl;
     }
 
     // Exibir o custo total para esta sequência de jobsVet
