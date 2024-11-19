@@ -60,4 +60,5 @@ public:
 
 void brkga(JIT &j, int N);
 vector<vector<int>> GeneratePopulation(JIT &j, int N);
-void Fitness(JIT &j, vector<vector<int>> population);
+vector<pair<vector<int>, double>> Fitness(JIT &j, vector<vector<int>> population);
+void organizeElite(JIT &j, vector<pair<vector<int>, double>> jobCostPairs);

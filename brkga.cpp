@@ -4,13 +4,14 @@
 #include <ctime>
 #include <vector>
 #include <algorithm> // Para std::sort
+#include <cmath>     // Para ceil
 
 using namespace std;
 
 void brkga(JIT &j, int N)
 {
   // vector<vector<int>> population = GeneratePopulation(j, N);
-  Fitness(j, GeneratePopulation(j, N));
+  organizeElite(j, Fitness(j, GeneratePopulation(j, N)));
 }
 
 // Função para gerar a população com N indivíduos
@@ -68,8 +69,9 @@ vector<vector<int>> GeneratePopulation(JIT &j, int N)
   return population;
 }
 
-void Fitness(JIT &j, vector<vector<int>> population)
+vector<pair<vector<int>, double>> Fitness(JIT &j, vector<vector<int>> population)
 {
+  vector<pair<vector<int>, double>> jobCostPairs; // Vetor para associar jobsVet ao totalCost
 
   for (const auto &jobsVet : population)
   {
@@ -116,22 +118,44 @@ void Fitness(JIT &j, vector<vector<int>> population)
       totalCost += penaltyCost;
 
       // FUTURAMENTE SERÁ NECESSÁRIO UMA OTIMIZAÇÃO AQUI
-
-      // Exibir detalhes para cada operação
-      cout
-          << "Job " << currentJob + 1 << " - Operacao " << opIndex + 1
-          << ": Machine " << machine << ", Start " << startTime
-          << ", Completion " << completionTime
-          << ", Earliness " << earliness
-          << ", Tardiness " << tardiness
-          << ", Penalty Cost " << penaltyCost << endl;
+      /*
+            // Exibir detalhes para cada operação
+            cout
+                << "Job " << currentJob + 1 << " - Operacao " << opIndex + 1
+                << ": Machine " << machine << ", Start " << startTime
+                << ", Completion " << completionTime
+                << ", Earliness " << earliness
+                << ", Tardiness " << tardiness
+                << ", Penalty Cost " << penaltyCost << endl;*/
     }
+    // Adicionar jobsVet e totalCost ao vetor de pares
+    jobCostPairs.emplace_back(jobsVet, totalCost);
 
     // Exibir o custo total para esta sequência de jobsVet
     cout << "Custo total para esta sequencia: " << totalCost << endl;
   }
-
-  // return totalCost;
+  /*
+    // Ordenar o vetor de pares pelo custo total (menor custo primeiro)
+    sort(jobCostPairs.begin(), jobCostPairs.end(),
+         [](const pair<vector<int>, double> &a, const pair<vector<int>, double> &b)
+         {
+           return a.second < b.second;
+         });
+  */
+  return jobCostPairs;
+  /*
+    // Exibir os pares ordenados
+    cout << "Sequencias ordenadas por custo total:" << endl;
+    for (const auto &[sequence, cost] : jobCostPairs)
+    {
+      cout << "Sequencia: ";
+      for (int job : sequence)
+      {
+        cout << job << " ";
+      }
+      cout << " | Custo Total: " << cost << endl;
+    }
+    */
 
   /*
     // SÓ PRA IMPRIMIR
@@ -166,6 +190,70 @@ void Fitness(JIT &j, vector<vector<int>> population)
            << "\n\n";
     }
     */
+}
+
+void organizeElite(JIT &j, vector<pair<vector<int>, double>> jobCostPairs)
+{
+  // Ordenar jobCostPairs pelo custo (menor custo primeiro)
+  sort(jobCostPairs.begin(), jobCostPairs.end(),
+       [](const pair<vector<int>, double> &a, const pair<vector<int>, double> &b)
+       {
+         return a.second < b.second;
+       });
+
+  cout << "ANTES DE GERAR" << endl;
+  // Exibir os pares ordenados
+  cout << "Sequencias ordenadas por custo total:" << endl;
+  for (const auto &[sequence, cost] : jobCostPairs)
+  {
+    cout << "Sequencia: ";
+    for (int job : sequence)
+    {
+      cout << job << " ";
+    }
+    cout << " | Custo Total: " << cost << endl;
+  }
+
+  // Definir a quantidade para o vetor elite (30% do total)
+  int totalSize = jobCostPairs.size();
+  int eliteSize = static_cast<int>(ceil(totalSize * 0.3));
+
+  // Separar os 30% menores valores em elite
+  vector<pair<vector<int>, double>> elite(jobCostPairs.begin(), jobCostPairs.begin() + eliteSize);
+
+  // Gerar novos pares aleatórios (mutants)
+  vector<pair<vector<int>, double>> mutants = Fitness(j, GeneratePopulation(j, eliteSize));
+
+  // Preencher o restante com os próximos elementos de jobCostPairs
+  int remainingSize = totalSize - eliteSize - mutants.size();
+  vector<pair<vector<int>, double>> remaining(jobCostPairs.begin() + eliteSize, jobCostPairs.begin() + eliteSize + remainingSize);
+
+  // Combinar elite, mutants e remaining para formar a nova população
+  vector<pair<vector<int>, double>> newPopulation;
+  newPopulation.reserve(elite.size() + mutants.size() + remaining.size()); // Alocar espaço
+
+  newPopulation.insert(newPopulation.end(), elite.begin(), elite.end());
+  newPopulation.insert(newPopulation.end(), mutants.begin(), mutants.end());
+  newPopulation.insert(newPopulation.end(), remaining.begin(), remaining.end());
+
+  // Exibir informações para depuração
+  cout << "Elite size: " << elite.size() << ", Mutants size: " << mutants.size()
+       << ", Remaining size: " << remaining.size() << endl;
+
+  cout << "New population size: " << newPopulation.size() << endl;
+
+  cout << "DEPOIS DE GERAR" << endl;
+  // Exibir os pares ordenados
+  cout << "Sequencias ordenadas por custo total:" << endl;
+  for (const auto &[sequence, cost] : newPopulation)
+  {
+    cout << "Sequencia: ";
+    for (int job : sequence)
+    {
+      cout << job << " ";
+    }
+    cout << " | Custo Total: " << cost << endl;
+  }
 }
 
 /*
