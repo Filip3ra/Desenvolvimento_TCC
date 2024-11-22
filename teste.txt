@@ -1,3 +1,96 @@
+Sequencia: 4 1 3 2 1 4 2 3  | Custo Total: 20.77
+Sequencia: 4 1 1 2 4 3 3 2  | Custo Total: 20.77
+Sequencia: 4 1 2 2 3 4 3 1  | Custo Total: 20.77
+Sequencia: 1 3 2 4 2 3 1 4  | Custo Total: 23.04
+Sequencia: 1 3 4 1 2 2 3 4  | Custo Total: 23.04
+Sequencia: 2 1 4 2 1 3 3 4  | Custo Total: 26.64
+Sequencia: 2 3 4 3 4 1 1 2  | Custo Total: 26.64
+Sequencia: 2 3 1 2 4 3 4 1  | Custo Total: 26.64
+Sequencia: 2 2 4 1 4 3 1 3  | Custo Total: 26.64
+Sequencia: 3 2 1 1 4 4 3 2  | Custo Total: 26.95
+Sequencia: 1 3 2 4 2 3 1 4  | Custo Total: 34.59
+Sequencia: 1 3 4 1 2 2 3 4  | Custo Total: 34.59
+Sequencia: 1 3 2 4 2 3 1 4  | Custo Total: 36.07
+Sequencia: 2 1 4 2 1 3 3 4  | Custo Total: 37.2
+Sequencia: 2 1 4 2 1 3 3 4  | Custo Total: 38.52
+Sequencia: 1 3 4 1 2 2 3 4  | Custo Total: 39.87
+Sequencia: 3 2 1 1 4 4 3 2  | Custo Total: 39.91
+Sequencia: 4 1 3 2 1 4 2 3  | Custo Total: 39.97
+Sequencia: 4 1 2 2 3 4 3 1  | Custo Total: 39.97
+Sequencia: 4 1 1 2 4 3 3 2  | Custo Total: 39.97
+Sequencia: 2 3 4 3 4 1 1 2  | Custo Total: 43.58
+Sequencia: 2 3 1 2 4 3 4 1  | Custo Total: 43.58
+Sequencia: 3 2 1 1 4 4 3 2  | Custo Total: 43.59
+Sequencia: 2 3 4 3 4 1 1 2  | Custo Total: 44.24
+Sequencia: 2 3 1 2 4 3 4 1  | Custo Total: 47.26
+Sequencia: 4 1 3 2 1 4 2 3  | Custo Total: 48.44
+Sequencia: 4 1 2 2 3 4 3 1  | Custo Total: 49.33
+Sequencia: 1 3 2 4 2 3 1 4  | Custo Total: 49.93
+Sequencia: 3 2 1 1 4 4 3 2  | Custo Total: 50.59
+Sequencia: 4 1 3 2 1 4 2 3  | Custo Total: 52.88
+Sequencia: 1 3 4 1 2 2 3 4  | Custo Total: 53.17
+Sequencia: 2 1 4 2 1 3 3 4  | Custo Total: 55.16
+Sequencia: 2 2 4 1 4 3 1 3  | Custo Total: 55.76
+Sequencia: 2 2 4 1 4 3 1 3  | Custo Total: 55.76
+Sequencia: 2 3 1 2 4 3 4 1  | Custo Total: 56.1
+Sequencia: 1 3 2 4 2 3 1 4  | Custo Total: 56.69
+Sequencia: 4 1 3 2 1 4 2 3  | Custo Total: 57.08
+Sequencia: 2 1 4 2 1 3 3 4  | Custo Total: 60.06
+Sequencia: 2 2 4 1 4 3 1 3  | Custo Total: 60.82
+Sequencia: 2 3 4 3 4 1 1 2  | Custo Total: 64.88
+Sequencia: 2 3 4 3 4 1 1 2  | Custo Total: 65.44
+Sequencia: 2 2 4 1 4 3 1 3  | Custo Total: 65.79
+Sequencia: 4 1 2 2 3 4 3 1  | Custo Total: 65.97
+Sequencia: 4 1 1 2 4 3 3 2  | Custo Total: 66.57
+Sequencia: 4 1 1 2 4 3 3 2  | Custo Total: 66.57
+Sequencia: 1 3 4 1 2 2 3 4  | Custo Total: 67.23
+Sequencia: 1 3 4 1 2 2 3 4  | Custo Total: 67.23
+Sequencia: 4 1 1 2 4 3 3 2  | Custo Total: 67.99
+Sequencia: 1 3 2 4 2 3 1 4  | Custo Total: 69.43
+Sequencia: 4 1 3 2 1 4 2 3  | Custo Total: 71.99
+Sequencia: 1 3 2 4 2 3 1 4  | Custo Total: 72.23
+Sequencia: 3 2 1 1 4 4 3 2  | Custo Total: 73.03
+Sequencia: 4 1 2 2 3 4 3 1  | Custo Total: 76.57
+Sequencia: 2 1 4 2 1 3 3 4  | Custo Total: 77.55
+Sequencia: 2 3 1 2 4 3 4 1  | Custo Total: 81.84
+Sequencia: 3 2 1 1 4 4 3 2  | Custo Total: 87.94
+Sequencia: 2 3 4 3 4 1 1 2  | Custo Total: 89.82
+Sequencia: 1 3 4 1 2 2 3 4  | Custo Total: 91.8
+Sequencia: 4 1 1 2 4 3 3 2  | Custo Total: 93.43
+Sequencia: 2 2 4 1 4 3 1 3  | Custo Total: 93.88
+Sequencia: 2 3 1 2 4 3 4 1  | Custo Total: 94.58
+Sequencia: 2 3 4 3 4 1 1 2  | Custo Total: 94.72
+Sequencia: 4 1 2 2 3 4 3 1  | Custo Total: 95.03
+Sequencia: 4 1 3 2 1 4 2 3  | Custo Total: 97.4
+Sequencia: 2 2 4 1 4 3 1 3  | Custo Total: 100.18
+Sequencia: 2 1 4 2 1 3 3 4  | Custo Total: 102.12
+Sequencia: 1 3 2 4 2 3 1 4  | Custo Total: 105.6
+Sequencia: 2 3 1 2 4 3 4 1  | Custo Total: 118.72
+Sequencia: 1 3 4 1 2 2 3 4  | Custo Total: 125.17
+Sequencia: 2 3 1 2 4 3 4 1  | Custo Total: 126.14
+Sequencia: 3 2 1 1 4 4 3 2  | Custo Total: 126.16
+Sequencia: 2 3 4 3 4 1 1 2  | Custo Total: 126.29
+Sequencia: 4 1 1 2 4 3 3 2  | Custo Total: 131.65
+Sequencia: 2 1 4 2 1 3 3 4  | Custo Total: 135.49
+Sequencia: 4 1 2 2 3 4 3 1  | Custo Total: 137.8
+Sequencia: 4 1 2 2 3 4 3 1  | Custo Total: 145.22
+Sequencia: 2 3 4 3 4 1 1 2  | Custo Total: 126.29
+Sequencia: 4 1 1 2 4 3 3 2  | Custo Total: 131.65
+Sequencia: 2 3 4 3 4 1 1 2  | Custo Total: 126.29
+Sequencia: 2 3 4 3 4 1 1 2  | Custo Total: 126.29
+Sequencia: 4 1 1 2 4 3 3 2  | Custo Total: 131.65
+Sequencia: 2 1 4 2 1 3 3 4  | Custo Total: 135.49
+Sequencia: 4 1 2 2 3 4 3 1  | Custo Total: 137.8
+Sequencia: 4 1 2 2 3 4 3 1  | Custo Total: 145.22
+Sequencia: 4 1 3 2 1 4 2 3  | Custo Total: 152
+Sequencia: 2 2 4 1 4 3 1 3  | Custo Total: 154.78
+Sequencia: 3 2 1 1 4 4 3 2  | Custo Total: 157.73
+Sequencia: 4 1 1 2 4 3 3 2  | Custo Total: 163.22
+
+
+
+
+
 0 20 44 0.96 0.46 		1 13 75 0.70 0.14 		
 0 21 43 0.39 0.60 		1 22 81 0.90 0.15 		
 0 19 54 0.77 0.53 		1 8 68 0.86 0.91 		
@@ -8,6 +101,9 @@
 0 7 35 0.62 0.32 		1 5 59 0.53 0.53 		
 0 9 44 0.70 0.93 		1 12 74 0.97 0.30 		
 1 25 57 0.77 0.57 		0 5 71 0.19 0.51 		
+
+
+
 
 
 /////////////// ESTRATÉGIA 1 //////////////////
@@ -92,3 +188,38 @@ processing time, etc.
      cout << op << " ";
    cout << endl;
    */
+
+
+
+
+Com base nisso que discutimos dos vetores elite, remaining e mutants, no código abaixo eu preciso realizar um cruzamento entre os dados desses vectors. Ou seja, se tenho as seguintes sequências:
+
+Elite:
+Sequencia: 4 1 2 3 3 4 1 2  | Custo Total: 101.66
+Sequencia: 1 3 2 4 2 3 1 4  | Custo Total: 105.6
+Sequencia: 4 1 2 4 3 3 2 1  | Custo Total: 124.79
+
+Mutants:
+
+Sequencia: 1 3 2 4 2 3 1 4  | Custo Total: 105.6
+Sequencia: 3 2 3 1 2 4 1 4  | Custo Total: 143.22
+Sequencia: 3 2 4 2 4 1 3 1  | Custo Total: 141.16
+
+Remaining:
+
+Sequencia: 3 4 1 2 1 4 3 2  | Custo Total: 129.29
+Sequencia: 4 4 1 3 2 2 3 1  | Custo Total: 139.02
+Sequencia: 3 2 4 2 4 1 3 1  | Custo Total: 141.16
+Sequencia: 3 2 3 1 2 4 1 4  | Custo Total: 143.22
+
+Preciso juntar mutants com remaining, numa variavel chamada de Aux. Depois vou cruzar sempre um elemento aleatório de Elite com um elemento aleatório de Aux. Preciso realizar N cruzamentos desses, onde N representa a soma do tamanho desses três grupos, elite, remaining e mutants, que nesse exemplo da 3 + 3 + 4, ou seja, realizo 10 cruzamentos. Esses cruzamentos serão os indivíduos da nova população. 
+
+O cruzamento segue as seguintes regras:
+Vou gerar uma variável X vazia de mesmo tipo e tamanho do indivíduo em elite, ou seja, se o indivíduo em elite tem 8 posições, então meu X também tem. Ai eu olho pra primeira posição de X e vou decidir se vou copiar o elemento da primeira posição do indivíduo de elite ou de Aux. Faço um sorteio enviesado, de modo que, tenha 70% de chance de selecionar o elemento do indivíduo de elite e os 30% restantes é a chance de puxar de Aux. 
+
+ex:
+Elite: 4 1 2 3 3 4 1 2 
+Cruzamento com:
+vector<pair<vector<int>, double>> Crossover(JIT &j, vector<vector<int>> elite, vector<vector<int>> mutants, vector<vector<int>> remaining)
+{
+}

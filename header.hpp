@@ -61,4 +61,5 @@ public:
 void brkga(JIT &j, int N);
 vector<vector<int>> GeneratePopulation(JIT &j, int N);
 vector<pair<vector<int>, double>> Fitness(JIT &j, vector<vector<int>> population);
-void organizeElite(JIT &j, vector<pair<vector<int>, double>> jobCostPairs);
+void organizeElite(JIT j, vector<pair<vector<int>, double>> jobCostPairs);
+vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, double>> elite, vector<pair<vector<int>, double>> mutants, vector<pair<vector<int>, double>> remaining);

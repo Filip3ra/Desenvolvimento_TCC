@@ -3,15 +3,19 @@
 #include <cstdlib>
 #include <ctime>
 #include <vector>
-#include <algorithm> // Para std::sort
-#include <cmath>     // Para ceil
+#include <algorithm>     // Para std::sort
+#include <cmath>         // Para ceil
+#include <random>        // crossover
+#include <unordered_map> // crossover
 
 using namespace std;
 
 void brkga(JIT &j, int N)
 {
   // vector<vector<int>> population = GeneratePopulation(j, N);
-  organizeElite(j, Fitness(j, GeneratePopulation(j, N)));
+  JIT aux;
+  aux = j; // não resolveu, os mutants são iguais a indivíduos anteriores
+  organizeElite(aux, Fitness(j, GeneratePopulation(j, N)));
 }
 
 // Função para gerar a população com N indivíduos
@@ -192,7 +196,7 @@ vector<pair<vector<int>, double>> Fitness(JIT &j, vector<vector<int>> population
     */
 }
 
-void organizeElite(JIT &j, vector<pair<vector<int>, double>> jobCostPairs)
+void organizeElite(JIT j, vector<pair<vector<int>, double>> jobCostPairs)
 {
   // Ordenar jobCostPairs pelo custo (menor custo primeiro)
   sort(jobCostPairs.begin(), jobCostPairs.end(),
@@ -230,11 +234,16 @@ void organizeElite(JIT &j, vector<pair<vector<int>, double>> jobCostPairs)
 
   // Combinar elite, mutants e remaining para formar a nova população
   vector<pair<vector<int>, double>> newPopulation;
-  newPopulation.reserve(elite.size() + mutants.size() + remaining.size()); // Alocar espaço
 
-  newPopulation.insert(newPopulation.end(), elite.begin(), elite.end());
-  newPopulation.insert(newPopulation.end(), mutants.begin(), mutants.end());
-  newPopulation.insert(newPopulation.end(), remaining.begin(), remaining.end());
+  // Chama Crossover
+  newPopulation = Crossover(j, elite, mutants, remaining);
+  /*
+    newPopulation.reserve(elite.size() + mutants.size() + remaining.size()); // Alocar espaço
+
+    newPopulation.insert(newPopulation.end(), elite.begin(), elite.end());
+    newPopulation.insert(newPopulation.end(), mutants.begin(), mutants.end());
+    newPopulation.insert(newPopulation.end(), remaining.begin(), remaining.end());
+  */
 
   // Exibir informações para depuração
   cout << "Elite size: " << elite.size() << ", Mutants size: " << mutants.size()
@@ -254,6 +263,113 @@ void organizeElite(JIT &j, vector<pair<vector<int>, double>> jobCostPairs)
     }
     cout << " | Custo Total: " << cost << endl;
   }
+}
+
+vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, double>> elite, vector<pair<vector<int>, double>> mutants, vector<pair<vector<int>, double>> remaining)
+{
+  // Combinar mutants e remaining em um único vetor chamado Aux
+  vector<pair<vector<int>, double>> aux = mutants;
+  aux.insert(aux.end(), remaining.begin(), remaining.end());
+
+  // Determinar o número total de cruzamentos (tamanho total de elite + mutants + remaining)
+  int totalCrossovers = elite.size() + mutants.size() + remaining.size();
+
+  // Inicializar gerador de números aleatórios
+  random_device rd;
+  mt19937 gen(rd());
+  uniform_real_distribution<> dist(0.0, 1.0);
+
+  // Variável para armazenar a nova população
+  vector<pair<vector<int>, double>> newPopulation;
+
+  // Realizar cruzamentos
+  for (int n = 0; n < totalCrossovers; ++n)
+  {
+    // Selecionar aleatoriamente um indivíduo de Elite e um de Aux
+    uniform_int_distribution<> eliteDist(0, elite.size() - 1);
+    uniform_int_distribution<> auxDist(0, aux.size() - 1);
+
+    vector<int> parentElite = elite[eliteDist(gen)].first;
+    vector<int> parentAux = aux[auxDist(gen)].first;
+
+    // Criar o vetor resultante do cruzamento
+    vector<int> child(parentElite.size(), -1);
+
+    // Frequência dos números já adicionados no filho
+    unordered_map<int, int> frequency;
+
+    for (size_t i = 0; i < child.size(); ++i)
+    {
+      // Determinar de qual pai puxar o valor (70% Elite, 30% Aux)
+      double chance = dist(gen);
+      int value = -1;
+
+      if (chance <= 0.7)
+      {
+        // Tentar puxar de Elite
+        value = parentElite[i];
+      }
+      else
+      {
+        // Tentar puxar de Aux
+        value = parentAux[i];
+      }
+
+      // Garantir que a frequência máxima de cada número seja respeitada
+      if (frequency[value] < 2)
+      {
+        child[i] = value;
+        frequency[value]++;
+      }
+      else
+      {
+        // Procurar um número válido de outro pai
+        if (frequency[parentElite[i]] < 2)
+        {
+          value = parentElite[i];
+        }
+        else if (frequency[parentAux[i]] < 2)
+        {
+          value = parentAux[i];
+        }
+        else
+        {
+          value = -1; // Não encontrado
+        }
+
+        if (value != -1)
+        {
+          child[i] = value;
+          frequency[value]++;
+        }
+      }
+    }
+
+    // Preencher valores faltantes aleatoriamente, se necessário
+    for (size_t i = 0; i < child.size(); ++i)
+    {
+      if (child[i] == -1)
+      {
+        for (int num = 1; num <= child.size(); ++num)
+        {
+          if (frequency[num] < 2)
+          {
+            child[i] = num;
+            frequency[num]++;
+            break;
+          }
+        }
+      }
+    }
+
+    // Calcular o fitness do indivíduo gerado
+    double childCost = Fitness(j, {child})[0].second;
+
+    // Adicionar o filho gerado à nova população
+    newPopulation.emplace_back(child, childCost);
+  }
+
+  return newPopulation;
 }
 
 /*
