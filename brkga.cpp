@@ -278,11 +278,11 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
   random_device rd;
   mt19937 gen(rd());
   uniform_real_distribution<> dist(0.0, 1.0);
-
+  cout << "teste 1" << endl;
   // Variável para armazenar a nova população
   vector<pair<vector<int>, double>> newPopulation;
 
-  // Realizar cruzamentos
+  // Realizar N cruzamentos
   for (int n = 0; n < totalCrossovers; ++n)
   {
     // Selecionar aleatoriamente um indivíduo de Elite e um de Aux
@@ -300,6 +300,7 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
 
     for (size_t i = 0; i < child.size(); ++i)
     {
+      cout << "teste 2" << endl;
       // Determinar de qual pai puxar o valor (70% Elite, 30% Aux)
       double chance = dist(gen);
       int value = -1;
@@ -350,23 +351,34 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
     {
       if (child[i] == -1)
       {
-        for (int num = 1; num <= child.size(); ++num)
+        bool found = false;
+        for (int num = 1; num <= static_cast<int>(child.size()); ++num)
         {
           if (frequency[num] < 2)
           {
+            cout << "Adicionando numero: " << num << " na posicao " << i << endl;
             child[i] = num;
             frequency[num]++;
+            found = true;
             break;
           }
+        }
+
+        // Caso não seja encontrado um número válido, lançar uma exceção para depuração
+        if (!found)
+        {
+          cerr << "Erro: Não foi possível preencher o índice " << i << " em child." << endl;
+          throw runtime_error("Não foi possível preencher todos os valores em child devido a restrições de frequência.");
         }
       }
     }
 
     // Calcular o fitness do indivíduo gerado
     double childCost = Fitness(j, {child})[0].second;
-
+    cout << "teste 4 gerei child cost" << endl;
     // Adicionar o filho gerado à nova população
     newPopulation.emplace_back(child, childCost);
+    cout << "teste 5 emplace back" << endl;
   }
 
   return newPopulation;
