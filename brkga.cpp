@@ -285,6 +285,7 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
   // Realizar N cruzamentos
   for (int n = 0; n < totalCrossovers; ++n)
   {
+    cout << "n = " << n << endl;
     // Selecionar aleatoriamente um indivíduo de Elite e um de Aux
     uniform_int_distribution<> eliteDist(0, elite.size() - 1);
     uniform_int_distribution<> auxDist(0, aux.size() - 1);
@@ -292,16 +293,48 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
     vector<int> parentElite = elite[eliteDist(gen)].first;
     vector<int> parentAux = aux[auxDist(gen)].first;
 
+    cout << "parentElite: [";
+    for (int r : parentElite)
+      cout << r << " ";
+    cout << "]\n\n";
+
+    cout << "parentAux: [";
+    for (int r : parentAux)
+      cout << r << " ";
+    cout << "]\n\n";
+
     // Criar o vetor resultante do cruzamento
     vector<int> child(parentElite.size(), -1);
 
     // Frequência dos números já adicionados no filho
-    unordered_map<int, int> frequency;
+    vector<int> frequency;
+    frequency.resize(j.nJobs, 0);
+    frequency[0] = 3;
 
-    for (size_t i = 0; i < child.size(); ++i)
+    int tamVec = parentElite.size();
+    cout << "tamVec = " << tamVec << endl;
+
+    for (int i = 0; i <= tamVec; ++i)
     {
-      cout << "teste 2" << endl;
-      // Determinar de qual pai puxar o valor (70% Elite, 30% Aux)
+
+      // Se dei uma passada e não preenchi tudo, repte o processo
+      if (i == tamVec)
+      {
+        for (int j = 0; j < frequency.size(); j++)
+        {
+          if (frequency[j] < 2)
+          {
+            cout << "opa, o job " << j << " ta faltando puxar! freq = " << frequency[j] << endl;
+            i = 0;
+            break;
+          }
+        }
+      }
+
+      cout << "i = " << i << endl;
+
+      // cout << "teste 2" << endl;
+      //  Determinar de qual pai puxar o valor (70% Elite, 30% Aux)
       double chance = dist(gen);
       int value = -1;
 
@@ -309,21 +342,26 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
       {
         // Tentar puxar de Elite
         value = parentElite[i];
+        cout << "elite :" << value;
       }
       else
       {
         // Tentar puxar de Aux
         value = parentAux[i];
+        cout << "aux :" << value;
       }
 
       // Garantir que a frequência máxima de cada número seja respeitada
       if (frequency[value] < 2)
       {
-        child[i] = value;
+        cout << " que puxei" << endl;
+        child.push_back(value);
         frequency[value]++;
+        // cout << "freq[" << value << "] = +1 e fica -> " << frequency[value] << endl;
       }
       else
       {
+        cout << "__" << endl;
         // Procurar um número válido de outro pai
         if (frequency[parentElite[i]] < 2)
         {
@@ -336,49 +374,62 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
         else
         {
           value = -1; // Não encontrado
+          cout << "AMBOS SATURADOS" << endl;
         }
 
         if (value != -1)
         {
-          child[i] = value;
+          child.push_back(value);
           frequency[value]++;
         }
       }
     }
-
-    // Preencher valores faltantes aleatoriamente, se necessário
-    for (size_t i = 0; i < child.size(); ++i)
-    {
-      if (child[i] == -1)
-      {
-        bool found = false;
-        for (int num = 1; num <= static_cast<int>(child.size()); ++num)
+    /*
+        // Preencher valores faltantes aleatoriamente, se necessário
+        for (size_t i = 0; i < child.size(); ++i)
         {
-          if (frequency[num] < 2)
+          if (child[i] == -1)
           {
-            cout << "Adicionando numero: " << num << " na posicao " << i << endl;
-            child[i] = num;
-            frequency[num]++;
-            found = true;
-            break;
-          }
-        }
+            bool found = false;
+            for (int num = 1; num <= static_cast<int>(child.size()); ++num)
+            {
+              if (frequency[num] < 2)
+              {
+                cout << "Adicionando numero: " << num << " na posicao " << i << endl;
+                child[i] = num;
+                frequency[num]++;
+                found = true;
+                break;
+              }
+            }
 
-        // Caso não seja encontrado um número válido, lançar uma exceção para depuração
-        if (!found)
-        {
-          cerr << "Erro: Não foi possível preencher o índice " << i << " em child." << endl;
-          throw runtime_error("Não foi possível preencher todos os valores em child devido a restrições de frequência.");
-        }
-      }
+            // Caso não seja encontrado um número válido, lançar uma exceção para depuração
+            if (!found)
+            {
+              cerr << "Erro: Não foi possível preencher o índice " << i << " em child." << endl;
+              throw runtime_error("Não foi possível preencher todos os valores em child devido a restrições de frequência.");
+            }
+          }
+        }*/
+    cout << "teste 4 gerei child cost" << endl;
+    cout << "child: [";
+    for (int r : child)
+      cout << r << " ";
+    cout << "]\n\n";
+
+    cout << "freq: [";
+    for (int j = 0; j < frequency.size(); j++)
+    {
+      cout << frequency[j];
     }
+    cout << "]\n\n";
 
     // Calcular o fitness do indivíduo gerado
     double childCost = Fitness(j, {child})[0].second;
-    cout << "teste 4 gerei child cost" << endl;
+
+    cout << "teste 5 emplace back" << endl;
     // Adicionar o filho gerado à nova população
     newPopulation.emplace_back(child, childCost);
-    cout << "teste 5 emplace back" << endl;
   }
 
   return newPopulation;
