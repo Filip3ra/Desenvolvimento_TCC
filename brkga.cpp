@@ -7,6 +7,7 @@
 #include <cmath>         // Para ceil
 #include <random>        // crossover
 #include <unordered_map> // crossover
+#include <queue>
 
 using namespace std;
 
@@ -278,7 +279,6 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
   random_device rd;
   mt19937 gen(rd());
   uniform_real_distribution<> dist(0.0, 1.0);
-  cout << "teste 1" << endl;
   // Variável para armazenar a nova população
   vector<pair<vector<int>, double>> newPopulation;
 
@@ -305,14 +305,15 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
 
     // Criar o vetor resultante do cruzamento
     vector<int> child(parentElite.size(), -1);
+    queue<int> queue_;
 
     // Frequência dos números já adicionados no filho
     vector<int> frequency;
-    frequency.resize(j.nJobs, 0);
+    frequency.resize(j.nJobs + 1, 0);
     frequency[0] = 3;
 
     int tamVec = parentElite.size();
-    cout << "tamVec = " << tamVec << endl;
+    bool satisfied = true;
 
     for (int i = 0; i <= tamVec; ++i)
     {
@@ -320,18 +321,24 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
       // Se dei uma passada e não preenchi tudo, repte o processo
       if (i == tamVec)
       {
+        satisfied = true;
+
         for (int j = 0; j < frequency.size(); j++)
         {
           if (frequency[j] < 2)
           {
-            cout << "opa, o job " << j << " ta faltando puxar! freq = " << frequency[j] << endl;
+            // cout << "opa, o job " << j << " ta faltando puxar! freq = " << frequency[j] << endl;
             i = 0;
-            break;
+            j = frequency.size();
+            satisfied = false;
           }
         }
-      }
 
-      cout << "i = " << i << endl;
+        if (satisfied == true)
+        {
+          break;
+        }
+      }
 
       // cout << "teste 2" << endl;
       //  Determinar de qual pai puxar o valor (70% Elite, 30% Aux)
@@ -355,9 +362,10 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
       if (frequency[value] < 2)
       {
         cout << " que puxei" << endl;
-        child.push_back(value);
+        // child[i] = value;
+        queue_.push(value);
         frequency[value]++;
-        // cout << "freq[" << value << "] = +1 e fica -> " << frequency[value] << endl;
+        // cout << "freq[" << value << "] = " << frequency[value] << endl;
       }
       else
       {
@@ -379,7 +387,10 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
 
         if (value != -1)
         {
-          child.push_back(value);
+
+          // cout << " value != -1 :::: freq[" << value << "] = " << frequency[value] << endl;
+          //  child[i] = value;
+          queue_.push(value);
           frequency[value]++;
         }
       }
@@ -411,7 +422,18 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
             }
           }
         }*/
-    cout << "teste 4 gerei child cost" << endl;
+
+    // Copia itens da fila para vector
+    int x = 0;
+    while (!queue_.empty())
+    {
+      {
+        child[x] = queue_.front();
+        queue_.pop();
+        ++x;
+      }
+    }
+
     cout << "child: [";
     for (int r : child)
       cout << r << " ";
@@ -431,6 +453,18 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
     // Adicionar o filho gerado à nova população
     newPopulation.emplace_back(child, childCost);
   }
+
+  cout << "tentativa de ordenar" << endl;
+  for (const auto &[sequence, cost] : newPopulation)
+  {
+    cout << "Sequencia: ";
+    for (int job : sequence)
+    {
+      cout << job << " ";
+    }
+    cout << " | Custo Total: " << cost << endl;
+  }
+  cout << "\n\n\n";
 
   return newPopulation;
 }
