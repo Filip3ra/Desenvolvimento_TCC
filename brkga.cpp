@@ -76,7 +76,7 @@ vector<vector<int>> GeneratePopulation(JIT &j, int N)
 
 vector<pair<vector<int>, double>> Fitness(JIT &j, vector<vector<int>> population)
 {
-  vector<pair<vector<int>, double>> jobCostPairs; // Vetor para associar jobsVet ao totalCost
+  vector<pair<vector<int>, double>> currentPopulation; // Vetor para associar jobsVet ao totalCost
 
   for (const auto &jobsVet : population)
   {
@@ -134,24 +134,24 @@ vector<pair<vector<int>, double>> Fitness(JIT &j, vector<vector<int>> population
                 << ", Penalty Cost " << penaltyCost << endl;*/
     }
     // Adicionar jobsVet e totalCost ao vetor de pares
-    jobCostPairs.emplace_back(jobsVet, totalCost);
+    currentPopulation.emplace_back(jobsVet, totalCost);
 
     // Exibir o custo total para esta sequência de jobsVet
-    cout << "Custo total para esta sequencia: " << totalCost << endl;
+    // cout << "Custo total para esta sequencia: " << totalCost << endl;
   }
   /*
     // Ordenar o vetor de pares pelo custo total (menor custo primeiro)
-    sort(jobCostPairs.begin(), jobCostPairs.end(),
+    sort(currentPopulation.begin(), currentPopulation.end(),
          [](const pair<vector<int>, double> &a, const pair<vector<int>, double> &b)
          {
            return a.second < b.second;
          });
   */
-  return jobCostPairs;
+  return currentPopulation;
   /*
     // Exibir os pares ordenados
     cout << "Sequencias ordenadas por custo total:" << endl;
-    for (const auto &[sequence, cost] : jobCostPairs)
+    for (const auto &[sequence, cost] : currentPopulation)
     {
       cout << "Sequencia: ";
       for (int job : sequence)
@@ -197,19 +197,19 @@ vector<pair<vector<int>, double>> Fitness(JIT &j, vector<vector<int>> population
     */
 }
 
-void organizeElite(JIT j, vector<pair<vector<int>, double>> jobCostPairs)
+void organizeElite(JIT j, vector<pair<vector<int>, double>> currentPopulation)
 {
-  // Ordenar jobCostPairs pelo custo (menor custo primeiro)
-  sort(jobCostPairs.begin(), jobCostPairs.end(),
+  // Ordenar currentPopulation pelo custo (menor custo primeiro)
+  sort(currentPopulation.begin(), currentPopulation.end(),
        [](const pair<vector<int>, double> &a, const pair<vector<int>, double> &b)
        {
          return a.second < b.second;
        });
 
-  cout << "ANTES DE GERAR" << endl;
+  cout << "PRIMEIRA GERACAO" << endl;
   // Exibir os pares ordenados
   cout << "Sequencias ordenadas por custo total:" << endl;
-  for (const auto &[sequence, cost] : jobCostPairs)
+  for (const auto &[sequence, cost] : currentPopulation)
   {
     cout << "Sequencia: ";
     for (int job : sequence)
@@ -219,43 +219,77 @@ void organizeElite(JIT j, vector<pair<vector<int>, double>> jobCostPairs)
     cout << " | Custo Total: " << cost << endl;
   }
 
-  // Definir a quantidade para o vetor elite (30% do total)
-  int totalSize = jobCostPairs.size();
-  int eliteSize = static_cast<int>(ceil(totalSize * 0.3));
+  for (int a = 0; a < 100; a++)
+  {
+    // Ordenar currentPopulation pelo custo (menor custo primeiro)
+    sort(currentPopulation.begin(), currentPopulation.end(),
+         [](const pair<vector<int>, double> &a, const pair<vector<int>, double> &b)
+         {
+           return a.second < b.second;
+         });
 
-  // Separar os 30% menores valores em elite
-  vector<pair<vector<int>, double>> elite(jobCostPairs.begin(), jobCostPairs.begin() + eliteSize);
+    // Definir a quantidade para o vetor elite (30% do total)
+    int totalSize = currentPopulation.size();
+    int eliteSize = static_cast<int>(ceil(totalSize * 0.3));
 
-  // Gerar novos pares aleatórios (mutants)
-  vector<pair<vector<int>, double>> mutants = Fitness(j, GeneratePopulation(j, eliteSize));
+    // Separar os 30% menores valores em elite
+    vector<pair<vector<int>, double>> elite(currentPopulation.begin(), currentPopulation.begin() + eliteSize);
 
-  // Preencher o restante com os próximos elementos de jobCostPairs
-  int remainingSize = totalSize - eliteSize - mutants.size();
-  vector<pair<vector<int>, double>> remaining(jobCostPairs.begin() + eliteSize, jobCostPairs.begin() + eliteSize + remainingSize);
+    // Gerar novos pares aleatórios (mutants)
+    vector<pair<vector<int>, double>> mutants = Fitness(j, GeneratePopulation(j, eliteSize));
 
-  // Combinar elite, mutants e remaining para formar a nova população
-  vector<pair<vector<int>, double>> newPopulation;
+    // Preencher o restante com os próximos elementos de currentPopulation
+    int remainingSize = totalSize - eliteSize - mutants.size();
+    vector<pair<vector<int>, double>> remaining(currentPopulation.begin() + eliteSize, currentPopulation.begin() + eliteSize + remainingSize);
 
-  // Chama Crossover
-  newPopulation = Crossover(j, elite, mutants, remaining);
-  /*
-    newPopulation.reserve(elite.size() + mutants.size() + remaining.size()); // Alocar espaço
+    // Combinar elite, mutants e remaining para formar a nova população
+    vector<pair<vector<int>, double>> newPopulation;
 
-    newPopulation.insert(newPopulation.end(), elite.begin(), elite.end());
-    newPopulation.insert(newPopulation.end(), mutants.begin(), mutants.end());
-    newPopulation.insert(newPopulation.end(), remaining.begin(), remaining.end());
-  */
+    // Chama Crossover
+    newPopulation = Crossover(j, elite, mutants, remaining);
 
-  // Exibir informações para depuração
-  cout << "Elite size: " << elite.size() << ", Mutants size: " << mutants.size()
-       << ", Remaining size: " << remaining.size() << endl;
+    currentPopulation.clear();
+    currentPopulation = newPopulation;
+    newPopulation.clear();
+    /*
+      newPopulation.reserve(elite.size() + mutants.size() + remaining.size()); // Alocar espaço
 
-  cout << "New population size: " << newPopulation.size() << endl;
+      newPopulation.insert(newPopulation.end(), elite.begin(), elite.end());
+      newPopulation.insert(newPopulation.end(), mutants.begin(), mutants.end());
+      newPopulation.insert(newPopulation.end(), remaining.begin(), remaining.end());
 
-  cout << "DEPOIS DE GERAR" << endl;
+
+    // Exibir informações para depuração
+    cout << "Elite size: " << elite.size() << ", Mutants size: " << mutants.size()
+         << ", Remaining size: " << remaining.size() << endl;
+
+    //cout << "New population size: " << newPopulation.size() << endl;
+
+    cout << "DEPOIS DE GERAR" << endl;
+    // Exibir os pares ordenados
+    cout << "Sequencias ordenadas por custo total:" << endl;
+    for (const auto &[sequence, cost] : newPopulation)
+    {
+      cout << "Sequencia: ";
+      for (int job : sequence)
+      {
+        cout << job << " ";
+      }
+      cout << " | Custo Total: " << cost << endl;
+    }
+*/
+  }
+  // Ordenar currentPopulation pelo custo (menor custo primeiro)
+  sort(currentPopulation.begin(), currentPopulation.end(),
+       [](const pair<vector<int>, double> &a, const pair<vector<int>, double> &b)
+       {
+         return a.second < b.second;
+       });
+
+  cout << "\nULTIMA GERACAO" << endl;
   // Exibir os pares ordenados
   cout << "Sequencias ordenadas por custo total:" << endl;
-  for (const auto &[sequence, cost] : newPopulation)
+  for (const auto &[sequence, cost] : currentPopulation)
   {
     cout << "Sequencia: ";
     for (int job : sequence)
@@ -285,23 +319,23 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
   // Realizar N cruzamentos
   for (int n = 0; n < totalCrossovers; ++n)
   {
-    cout << "n = " << n << endl;
-    // Selecionar aleatoriamente um indivíduo de Elite e um de Aux
+    // cout << "n = " << n << endl;
+    //  Selecionar aleatoriamente um indivíduo de Elite e um de Aux
     uniform_int_distribution<> eliteDist(0, elite.size() - 1);
     uniform_int_distribution<> auxDist(0, aux.size() - 1);
 
     vector<int> parentElite = elite[eliteDist(gen)].first;
     vector<int> parentAux = aux[auxDist(gen)].first;
-
+    /*
     cout << "parentElite: [";
     for (int r : parentElite)
       cout << r << " ";
     cout << "]\n\n";
 
-    cout << "parentAux: [";
-    for (int r : parentAux)
-      cout << r << " ";
-    cout << "]\n\n";
+        cout << "parentAux: [";
+        for (int r : parentAux)
+          cout << r << " ";
+        cout << "]\n\n";*/
 
     // Criar o vetor resultante do cruzamento
     vector<int> child(parentElite.size(), -1);
@@ -310,7 +344,8 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
     // Frequência dos números já adicionados no filho
     vector<int> frequency;
     frequency.resize(j.nJobs + 1, 0);
-    frequency[0] = 3;
+    frequency[0] = 999;
+    int maxFreq = j.nMachines;
 
     int tamVec = parentElite.size();
     bool satisfied = true;
@@ -325,7 +360,7 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
 
         for (int j = 0; j < frequency.size(); j++)
         {
-          if (frequency[j] < 2)
+          if (frequency[j] < maxFreq)
           {
             // cout << "opa, o job " << j << " ta faltando puxar! freq = " << frequency[j] << endl;
             i = 0;
@@ -349,40 +384,40 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
       {
         // Tentar puxar de Elite
         value = parentElite[i];
-        cout << "elite :" << value;
+        // cout << "elite :" << value;
       }
       else
       {
         // Tentar puxar de Aux
         value = parentAux[i];
-        cout << "aux :" << value;
+        // cout << "aux :" << value;
       }
 
       // Garantir que a frequência máxima de cada número seja respeitada
-      if (frequency[value] < 2)
+      if (frequency[value] < maxFreq)
       {
-        cout << " que puxei" << endl;
-        // child[i] = value;
+        // cout << " que puxei" << endl;
+        //  child[i] = value;
         queue_.push(value);
         frequency[value]++;
         // cout << "freq[" << value << "] = " << frequency[value] << endl;
       }
       else
       {
-        cout << "__" << endl;
-        // Procurar um número válido de outro pai
-        if (frequency[parentElite[i]] < 2)
+        // cout << "__" << endl;
+        //  Procurar um número válido de outro pai
+        if (frequency[parentElite[i]] < maxFreq)
         {
           value = parentElite[i];
         }
-        else if (frequency[parentAux[i]] < 2)
+        else if (frequency[parentAux[i]] < maxFreq)
         {
           value = parentAux[i];
         }
         else
         {
           value = -1; // Não encontrado
-          cout << "AMBOS SATURADOS" << endl;
+          // cout << "AMBOS SATURADOS" << endl;
         }
 
         if (value != -1)
@@ -425,47 +460,48 @@ vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, dou
 
     // Copia itens da fila para vector
     int x = 0;
+    // cout << "queue: [";
     while (!queue_.empty())
     {
-      {
-        child[x] = queue_.front();
-        queue_.pop();
-        ++x;
-      }
+      // cout << queue_.front();
+      child[x] = queue_.front();
+      queue_.pop();
+      ++x;
     }
+    // cout << "]\n";
+    /*
+        cout << "child: [";
+        for (int r : child)
+          cout << r << " ";
+        cout << "]\n\n";
 
-    cout << "child: [";
-    for (int r : child)
-      cout << r << " ";
-    cout << "]\n\n";
-
-    cout << "freq: [";
-    for (int j = 0; j < frequency.size(); j++)
-    {
-      cout << frequency[j];
-    }
-    cout << "]\n\n";
+        cout << "freq: [";
+        for (int j = 0; j < frequency.size(); j++)
+        {
+          cout << frequency[j];
+        }
+        cout << "]\n\n";*/
 
     // Calcular o fitness do indivíduo gerado
     double childCost = Fitness(j, {child})[0].second;
 
-    cout << "teste 5 emplace back" << endl;
-    // Adicionar o filho gerado à nova população
+    // cout << "teste 5 emplace back" << endl;
+    //  Adicionar o filho gerado à nova população
     newPopulation.emplace_back(child, childCost);
   }
-
-  cout << "tentativa de ordenar" << endl;
-  for (const auto &[sequence, cost] : newPopulation)
-  {
-    cout << "Sequencia: ";
-    for (int job : sequence)
+  /*
+    // Exibir os pares ordenados
+    cout << "Sequencias ordenadas por custo total:" << endl;
+    for (const auto &[sequence, cost] : newPopulation)
     {
-      cout << job << " ";
+      cout << "Sequencia: ";
+      for (int job : sequence)
+      {
+        cout << job << " ";
+      }
+      cout << " | Custo Total: " << cost << endl;
     }
-    cout << " | Custo Total: " << cost << endl;
-  }
-  cout << "\n\n\n";
-
+  */
   return newPopulation;
 }
 
