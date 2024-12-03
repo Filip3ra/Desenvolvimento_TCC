@@ -7,6 +7,7 @@
 #include <fstream>
 #include <algorithm>
 #include <stack>
+#include <chrono> // Para medir o tempo
 
 using namespace std;
 
