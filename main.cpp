@@ -19,8 +19,12 @@ int main(int argc, char **argv)
   auto start = std::chrono::high_resolution_clock::now();
 
   j.parseInstance(file_path);
-  j.printInstance();
-  brkga(j, 10);
+  // j.printInstance();
+
+  for (size_t i = 0; i < 10; i++)
+  {
+    brkga(j, 100);
+  }
 
   // Capturar o tempo final
   auto end = std::chrono::high_resolution_clock::now();

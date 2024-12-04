@@ -8,8 +8,11 @@
 #include <random>        // crossover
 #include <unordered_map> // crossover
 #include <queue>
+#include <limits> // Para std::numeric_limits
 
 using namespace std;
+
+double bestSolution = numeric_limits<double>::max(); // Inicializa com um valor muito alto
 
 void brkga(JIT &j, int N)
 {
@@ -205,19 +208,19 @@ void organizeElite(JIT j, vector<pair<vector<int>, double>> currentPopulation)
        {
          return a.second < b.second;
        });
-
-  cout << "PRIMEIRA GERACAO" << endl;
-  // Exibir os pares ordenados
-  cout << "Sequencias ordenadas por custo total:" << endl;
-  for (const auto &[sequence, cost] : currentPopulation)
-  {
-    cout << "Sequencia: ";
-    for (int job : sequence)
+  /*
+    cout << "PRIMEIRA GERACAO" << endl;
+    // Exibir os pares ordenados
+    cout << "Sequencias ordenadas por custo total:" << endl;
+    for (const auto &[sequence, cost] : currentPopulation)
     {
-      cout << job << " ";
-    }
-    cout << " | Custo Total: " << cost << endl;
-  }
+      cout << "Sequencia: ";
+      for (int job : sequence)
+      {
+        cout << job << " ";
+      }
+      cout << " | Custo Total: " << cost << endl;
+    }*/
 
   for (int a = 0; a < 100; a++)
   {
@@ -285,18 +288,25 @@ void organizeElite(JIT j, vector<pair<vector<int>, double>> currentPopulation)
        {
          return a.second < b.second;
        });
-
-  cout << "\nULTIMA GERACAO" << endl;
-  // Exibir os pares ordenados
-  cout << "Sequencias ordenadas por custo total:" << endl;
-  for (const auto &[sequence, cost] : currentPopulation)
-  {
-    cout << "Sequencia: ";
-    for (int job : sequence)
+  /*
+    cout << "\nULTIMA GERACAO" << endl;
+    // Exibir os pares ordenados
+    cout << "Sequencias ordenadas por custo total:" << endl;
+    for (const auto &[sequence, cost] : currentPopulation)
     {
-      cout << job << " ";
-    }
-    cout << " | Custo Total: " << cost << endl;
+      cout << "Sequencia: ";
+      for (int job : sequence)
+      {
+        cout << job << " ";
+      }
+      cout << " | Custo Total: " << cost << endl;
+    }*/
+
+  // Verificar se o menor custo da população atual é melhor que o melhor custo encontrado
+  if (currentPopulation[0].second < bestSolution)
+  {
+    bestSolution = currentPopulation[0].second;
+    cout << "Nova melhor solucao encontrada: " << bestSolution << endl;
   }
 }
 
