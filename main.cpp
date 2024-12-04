@@ -21,7 +21,7 @@ int main(int argc, char **argv)
   j.parseInstance(file_path);
   // j.printInstance();
 
-  for (size_t i = 0; i < 10; i++)
+  for (size_t i = 0; i < 500; i++)
   {
     brkga(j, 100);
   }
