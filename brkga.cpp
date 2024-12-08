@@ -14,12 +14,13 @@ using namespace std;
 
 double bestSolution = numeric_limits<double>::max(); // Inicializa com um valor muito alto
 
-void brkga(JIT &j, int N)
+double brkga(JIT &j, int N, int geracoes)
 {
   // vector<vector<int>> population = GeneratePopulation(j, N);
   JIT aux;
   aux = j; // não resolveu, os mutants são iguais a indivíduos anteriores
-  organizeElite(aux, Fitness(j, GeneratePopulation(j, N)));
+  organizeElite(aux, Fitness(j, GeneratePopulation(j, N)), geracoes);
+  return bestSolution;
 }
 
 // Função para gerar a população com N indivíduos
@@ -200,7 +201,7 @@ vector<pair<vector<int>, double>> Fitness(JIT &j, vector<vector<int>> population
     */
 }
 
-void organizeElite(JIT j, vector<pair<vector<int>, double>> currentPopulation)
+void organizeElite(JIT j, vector<pair<vector<int>, double>> currentPopulation, int geracoes)
 {
   // Ordenar currentPopulation pelo custo (menor custo primeiro)
   sort(currentPopulation.begin(), currentPopulation.end(),
@@ -222,7 +223,7 @@ void organizeElite(JIT j, vector<pair<vector<int>, double>> currentPopulation)
       cout << " | Custo Total: " << cost << endl;
     }*/
 
-  for (int a = 0; a < 100; a++)
+  for (int a = 0; a < geracoes; a++)
   {
     // Ordenar currentPopulation pelo custo (menor custo primeiro)
     sort(currentPopulation.begin(), currentPopulation.end(),
@@ -306,7 +307,7 @@ void organizeElite(JIT j, vector<pair<vector<int>, double>> currentPopulation)
   if (currentPopulation[0].second < bestSolution)
   {
     bestSolution = currentPopulation[0].second;
-    cout << "Nova melhor solucao encontrada: " << bestSolution << endl;
+    // cout << "Nova melhor solucao encontrada: " << bestSolution << endl;
   }
 }
 
