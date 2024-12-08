@@ -1,5 +1,5 @@
 scenario <- list(
-  targetRunner = "target-runner.R",
+  targetRunner = "target-runner.bat",
   instances = "instances.txt",
   parameterFile = "parameters.txt",
   maxExperiments = 1000,      # Máximo de execuções
