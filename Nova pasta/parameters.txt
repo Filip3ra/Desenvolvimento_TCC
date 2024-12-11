@@ -1,0 +1,3 @@
+execucoes "--execucoes " i (1, 2)
+qtdIndividuos "--qtdIndividuos " i (10, 100)
+geracoes "--geracoes " i (10, 100)

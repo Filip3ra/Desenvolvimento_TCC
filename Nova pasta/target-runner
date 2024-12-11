@@ -1,0 +1,37 @@
+#!/bin/bash
+###############################################################################
+# This script is to tune the ACOTSP software.
+#
+# PARAMETERS:
+# $1 is the ID of the candidate to be evaluated
+# $2 is the instance ID
+# $3 is the seed
+# $4 is the instance name
+# The rest ($* after `shift 4') are parameters for running ACOTSP
+#
+# RETURN VALUE:
+# This script should print a single numerical value (the value to be minimized).
+###############################################################################
+args <- commandArgs(trailingOnly = TRUE)
+
+# Parâmetros
+instance <- args[1]
+execucoes <- as.integer(args[2])
+qtdIndividuos <- as.integer(args[3])
+geracoes <- as.integer(args[4])
+
+
+# Path to the ACOTSP executable (this path is relative to the execution directory `execDir` specified in the scenario).
+# EXE="~/bin/acotsp"
+EXE="./prog"
+
+
+# Comando para rodar o programa
+# SET "exe=prog.exe"
+command <- paste("./prog", instance, execucoes, qtdIndividuos, geracoes)
+
+# Executa o comando e captura o resultado
+result <- system(command, intern = TRUE)
+
+# Extrai o tempo de execução
+cat(result, "\n")

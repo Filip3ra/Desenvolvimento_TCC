@@ -1,0 +1,7 @@
+parameterFile = "./parameters.txt"
+targetRunner = "./target-runner"
+execDir = "./"
+
+trainInstancesDir = "./instances.txt"
+
+maxExperiments = 100

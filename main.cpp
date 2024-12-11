@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     bestSol = brkga(j, qtdIndividuos, geracoes);
   }
 
-  cout << bestSol << endl;
+  cout << bestSol;
 
   // Capturar o tempo final
   auto end = std::chrono::high_resolution_clock::now();
