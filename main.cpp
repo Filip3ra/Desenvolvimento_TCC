@@ -1,61 +1,82 @@
 #include "header.hpp"
+#include <filesystem> // Para lidar com pastas e arquivos
 
 using namespace std;
+namespace fs = std::filesystem;
 
 int main(int argc, char **argv)
 {
-  /*
-    if (argc == 0)
-    {
-      cout << "Missing arguments\n";
-      return -1;
-    }*/
-
-  if (argc < 5) // Verifica se os parâmetros necessários foram passados
+  if (argc < 2)
   {
-    cout << "Usage: <program> <file_path> <execucoes> <qtdIndividuos> <geracoes>\n";
+    cout << "Missing output file path\n";
     return -1;
   }
 
-  string file_path(argv[1]);         // Caminho da instância
-  int execucoes = stoi(argv[2]);     // Número de execuções
-  int qtdIndividuos = stoi(argv[3]); // Quantidade de indivíduos
-  int geracoes = stoi(argv[4]);      // Número de gerações
+  string outputFile(argv[1]); // Caminho do arquivo de saída
 
-  if (execucoes < 1 || execucoes > 2 ||
-      qtdIndividuos < 10 || qtdIndividuos > 1000 ||
-      geracoes < 10 || geracoes > 500)
+  /*
+    vector<string> folders = {"loose-equal"};
+    vector<string> files = {"test1_10x2.txt"};
+  */
+
+  vector<string> folders = {"loose-equal", "loose-tard", "tight-equal", "tight-tard"};
+  vector<string> files = {
+      "test1_10x2.txt", "test2_10x2.txt", "test1_10x5.txt", "test2_10x5.txt",
+      "test1_10x10.txt", "test2_10x10.txt", "test1_15x2.txt", "test2_15x2.txt",
+      "test1_15x5.txt", "test2_15x5.txt", "test1_15x10.txt", "test2_15x10.txt",
+      "test1_20x2.txt", "test2_20x2.txt", "test1_20x5.txt", "test2_20x5.txt",
+      "test1_20x10.txt", "test2_20x10.txt"};
+
+  int execucoes = 3;       // Número de execuções
+  int qtdIndividuos = 481; // Quantidade de indivíduos
+  int geracoes = 514;      // Número de gerações
+
+  ofstream resultFile(outputFile);
+  if (!resultFile.is_open())
   {
-    cout << "Error: Parameters out of allowed range [10, 1000].\n";
+    cout << "Erro ao abrir o arquivo de saída\n";
     return -1;
   }
 
   JIT j;
 
-  /*
-    int execucoes = 500;
-    int qtdIndividuos = 100;
-    int geracoes = 100;*/
-
-  // Capturar o tempo inicial
-  auto start = std::chrono::high_resolution_clock::now();
-
-  j.parseInstance(file_path);
-  // j.printInstance();
-  int bestSol;
-  for (size_t i = 0; i < execucoes; i++)
+  for (const auto &folder : folders)
   {
-    bestSol = brkga(j, qtdIndividuos, geracoes);
+    resultFile << folder << "\n";
+    for (const auto &file : files)
+    {
+      string filePath = "instances/" + folder + "/" + file;
+      double bestSol = 3000000;
+
+      // Capturar o tempo inicial
+      auto start = chrono::high_resolution_clock::now();
+
+      j.parseInstance(filePath);
+
+      for (size_t i = 0; i < execucoes; i++)
+      {
+        double currentSol = brkga(j, qtdIndividuos, geracoes);
+        bestSol = min(bestSol, currentSol);
+      }
+
+      // Capturar o tempo final
+      auto end = chrono::high_resolution_clock::now();
+
+      // Calcular a duração em milissegundos
+      chrono::duration<double, milli> duration = end - start;
+
+      // Escrever os resultados no arquivo
+      resultFile << file << " " << bestSol << " " << duration.count() << "\n";
+
+      // bestSol = 300000;
+      cout << bestSol << endl;
+
+      cout << "Arquivo processado: " << filePath << "\n";
+    }
+    resultFile << "\n"; // Linha em branco entre pastas
   }
 
-  cout << bestSol;
-
-  // Capturar o tempo final
-  auto end = std::chrono::high_resolution_clock::now();
-
-  // Calcular a duração em milissegundos
-  std::chrono::duration<double, std::milli> duration = end - start;
-
-  // Exibir o tempo em milissegundos
-  // std::cout << "Tempo de execucao: " << duration.count() << " ms" << std::endl;
+  resultFile.close();
+  cout << "Resultados gravados em " << outputFile << "\n";
+  return 0;
 }

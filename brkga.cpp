@@ -12,14 +12,13 @@
 
 using namespace std;
 
-double bestSolution = numeric_limits<double>::max(); // Inicializa com um valor muito alto
-
 double brkga(JIT &j, int N, int geracoes)
 {
   // vector<vector<int>> population = GeneratePopulation(j, N);
+  double bestSolution = numeric_limits<double>::max(); // Inicializa com um valor muito alto
   JIT aux;
   aux = j; // não resolveu, os mutants são iguais a indivíduos anteriores
-  organizeElite(aux, Fitness(j, GeneratePopulation(j, N)), geracoes);
+  organizeElite(aux, Fitness(j, GeneratePopulation(j, N)), geracoes, bestSolution);
   return bestSolution;
 }
 
@@ -201,7 +200,7 @@ vector<pair<vector<int>, double>> Fitness(JIT &j, vector<vector<int>> population
     */
 }
 
-void organizeElite(JIT j, vector<pair<vector<int>, double>> currentPopulation, int geracoes)
+void organizeElite(JIT &j, vector<pair<vector<int>, double>> currentPopulation, int geracoes, double &bestSolution)
 {
   // Ordenar currentPopulation pelo custo (menor custo primeiro)
   sort(currentPopulation.begin(), currentPopulation.end(),
