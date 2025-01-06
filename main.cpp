@@ -14,11 +14,6 @@ int main(int argc, char **argv)
 
   string outputFile(argv[1]); // Caminho do arquivo de saída
 
-  /*
-    vector<string> folders = {"loose-equal"};
-    vector<string> files = {"test1_10x2.txt"};
-  */
-
   vector<string> folders = {"loose-equal", "loose-tard", "tight-equal", "tight-tard"};
   vector<string> files = {
       "test1_10x2.txt", "test2_10x2.txt", "test1_10x5.txt", "test2_10x5.txt",
@@ -46,7 +41,11 @@ int main(int argc, char **argv)
     for (const auto &file : files)
     {
       string filePath = "instances/" + folder + "/" + file;
-      double bestSol = 3000000;
+      double bestSol = 9000000;
+      double earliness = 9000000;
+      double tardiness = 9000000;
+
+      SolutionData currentSol;
 
       // Capturar o tempo inicial
       auto start = chrono::high_resolution_clock::now();
@@ -55,8 +54,14 @@ int main(int argc, char **argv)
 
       for (size_t i = 0; i < execucoes; i++)
       {
-        double currentSol = brkga(j, qtdIndividuos, geracoes);
-        bestSol = min(bestSol, currentSol);
+        currentSol = brkga(j, qtdIndividuos, geracoes);
+        if (currentSol.bestSolution < bestSol)
+        {
+          bestSol = currentSol.bestSolution;
+          earliness = currentSol.earlinessCost;
+          tardiness = currentSol.tardinessCost;
+        }
+        // bestSol = min(bestSol, currentSol.bestSolution);
       }
 
       // Capturar o tempo final
@@ -66,10 +71,14 @@ int main(int argc, char **argv)
       chrono::duration<double, milli> duration = end - start;
 
       // Escrever os resultados no arquivo
-      resultFile << file << " " << bestSol << " " << duration.count() << "\n";
+      resultFile << file << " "
+                 << bestSol << " "
+                 << earliness << " "
+                 << tardiness << " "
+                 << duration.count() << "\n";
 
       // bestSol = 300000;
-      cout << bestSol << endl;
+      // cout << bestSol << endl;
 
       cout << "Arquivo processado: " << filePath << "\n";
     }

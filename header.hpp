@@ -7,6 +7,9 @@
 #include <fstream>
 #include <algorithm>
 #include <stack>
+#include <queue>
+#include <random>
+#include <cmath>
 #include <chrono> // Para medir o tempo
 
 using namespace std;
@@ -20,12 +23,15 @@ using namespace std;
 // Neighbor: Schedule + move that created the neighbor
 #define Neighbor pair<Schedule, vector<int>>
 
+struct SolutionData
+{
+  double bestSolution;  // Melhor solução
+  double earlinessCost; // Custo de earliness
+  double tardinessCost; // Custo de tardiness
+};
+
 class JIT
 {
-
-  // operations start from 1
-  // jobs and machines start from 0 (the machines are 0-indexed in the instances of Baptiste et. al(2008))
-
 public:
   // number of jobs in the instance
   int nJobs;
@@ -35,7 +41,7 @@ public:
   int nOperations;
   // processingTime[i] = processing time of operation i
   vector<int> processingTime;
-  // duedDate[i] = due date of operation i
+  // dueDate[i] = due date of operation i
   vector<int> dueDate;
   // earliness[i] = earliness penalty of operation i
   vector<double> earliness;
@@ -53,14 +59,16 @@ public:
   vector<vector<int>> processingOrder;
 
   vector<double> readLine(string line);
-
   void parseInstance(string path);
-
   void printInstance();
 };
 
-double brkga(JIT &j, int N, int geracoes);
+SolutionData brkga(JIT &j, int N, int geracoes);
 vector<vector<int>> GeneratePopulation(JIT &j, int N);
-vector<pair<vector<int>, double>> Fitness(JIT &j, vector<vector<int>> population);
-void organizeElite(JIT &j, vector<pair<vector<int>, double>> jobCostPairs, int geracoes, double &bestSolution);
-vector<pair<vector<int>, double>> Crossover(JIT &j, vector<pair<vector<int>, double>> elite, vector<pair<vector<int>, double>> mutants, vector<pair<vector<int>, double>> remaining);
+vector<pair<vector<int>, vector<double>>> Fitness(JIT &j, vector<vector<int>> population);
+void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopulation, int geracoes, SolutionData &bestSolution);
+vector<pair<vector<int>, vector<double>>> Crossover(
+    JIT &j,
+    vector<pair<vector<int>, vector<double>>> elite,
+    vector<pair<vector<int>, vector<double>>> mutants,
+    vector<pair<vector<int>, vector<double>>> remaining);
