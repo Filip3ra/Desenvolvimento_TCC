@@ -64,6 +64,7 @@ public:
 };
 
 SolutionData brkga(JIT &j, int N, int geracoes);
+SolutionData gifferThompson(JIT &j);
 vector<vector<int>> GeneratePopulation(JIT &j, int N);
 vector<pair<vector<int>, vector<double>>> Fitness(JIT &j, vector<vector<int>> population);
 void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopulation, int geracoes, SolutionData &bestSolution);
