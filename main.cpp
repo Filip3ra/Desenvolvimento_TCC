@@ -14,12 +14,11 @@ int main(int argc, char **argv)
   }
 
   string outputFile(argv[1]);
-
   /*
     vector<string> folders = {"loose-equal"};
     vector<string> files = {
         "test1_10x2.txt", "test2_10x2.txt"};*/
-
+  /**/
   vector<string> folders = {"loose-equal", "loose-tard", "tight-equal", "tight-tard"};
   vector<string> files = {
       "test1_10x2.txt", "test2_10x2.txt", "test1_10x5.txt", "test2_10x5.txt",

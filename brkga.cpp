@@ -77,6 +77,16 @@ vector<vector<int>> GeneratePopulation(JIT &j, int N)
   return population;
 }
 
+/* FITNESS V3
+ */
+
+/* FITNESS V2 -
+Cada máquina tem um tempo de processamento individual, então
+as operações são colocadas com base em duas variáveis: machineFinishTime e jobFinishTime.
+Desse modo penalidades por adiantamento serão extindas, prevalencendo somente
+penalidades por atraso. Pois as primeiras operações são alocadas o mais próximo
+de sua data de entrega possível.
+ */
 vector<pair<vector<int>, vector<double>>> Fitness(JIT &j, vector<vector<int>> population)
 {
   vector<pair<vector<int>, vector<double>>> currentPopulation;
@@ -151,6 +161,74 @@ vector<pair<vector<int>, vector<double>>> Fitness(JIT &j, vector<vector<int>> po
   return currentPopulation;
 }
 
+/* FITNESS V1 -
+
+vector<pair<vector<int>, vector<double>>> Fitness(JIT &j, vector<vector<int>> population)
+{
+
+  vector<pair<vector<int>, vector<double>>> currentPopulation; // Vetor para associar jobsVet aos custos
+
+  for (const auto &jobsVet : population)
+  {
+    // Controle de operações processadas e tempos de término
+    vector<bool> lastCompletionTime(j.nJobs, false); // Tempo de término da última operação de cada job
+    double totalCost = 0.0;
+    double totalEarlinessCost = 0.0;
+    double totalTardinessCost = 0.0;
+    int actualCompletionTime = 0;
+
+    for (int i = 0; i < jobsVet.size(); i++)
+    {
+      int currentJob = jobsVet[i] - 1; // Índice do job no vetor de dados
+      int opIndex = 0;                 // Índice da operação atual para o job
+
+      // Controle pra saber se já processei a primeira operação ou não
+      if (lastCompletionTime[currentJob] == false)
+      {
+        opIndex = 0;
+        lastCompletionTime[currentJob] = true;
+      }
+      else
+      {
+        opIndex = 1;
+      }
+
+      // Obter a posição da operação atual do job nos vetores de dados
+      int op = j.processingOrder[currentJob][opIndex];
+      int machine = j.machine[op];
+      int procTime = j.processingTime[op];
+      int dueDate = j.dueDate[op];
+      double alpha = j.earliness[op];
+      double beta = j.tardiness[op];
+
+      // Calcular o tempo de início considerando o término da última operação calculada
+      int startTime = actualCompletionTime;
+      actualCompletionTime += procTime;
+      int completionTime = actualCompletionTime;
+
+      // Calcular penalidades de adiantamento e atraso
+      int earliness = max(dueDate - completionTime, 0);
+      int tardiness = max(completionTime - dueDate, 0);
+
+      double earliness_cost = alpha * earliness;
+      double tardiness_cost = beta * tardiness;
+      totalEarlinessCost += earliness_cost;
+      totalTardinessCost += tardiness_cost;
+
+      double penaltyCost = alpha * earliness + beta * tardiness;
+
+      // Acumular penalidade no custo total
+      totalCost += penaltyCost;
+    }
+
+    // Adicionar jobsVet e vetor de custos ao vetor de pares
+    currentPopulation.emplace_back(jobsVet, vector<double>{totalCost, totalEarlinessCost, totalTardinessCost});
+  }
+
+  return currentPopulation;
+}
+
+*/
 void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopulation, int geracoes, SolutionData &result)
 {
 
