@@ -250,3 +250,20 @@ Sequencia: 4 8 4 2 6 2 3 1 5 10 6 7 5 8 10 9 7 9 3 1  | Custo Total: 1435.11
 
       // Calcular a duração em milissegundos
       chrono::duration<double, milli> duration = end - start;
+
+
+
+
+
+Dado que você analisou os arquivos do meu algoritmo nessa conversa, olhe para a função Fitness no arquivo brkga.cpp. Nela estou calculando o fitness de modo que ele olha pra uma operação, seu tempo de processamento, suas penalidades, depois olha para a próxima operação, e dado que processou uma anteriormente ele vai somando os tempos de processamento, tempo de processamento atual, etc. Ou seja, ele basicamente olha as operações linearmente e vai calculando sua posição de processamento com base nas operações anteriormente processadas, ele não otimiza a posição da operação para minimizar as penalidades. 
+
+Por exemplo:
+Se ele recebe uma instância com 4 jobs e duas máquinas, então cada job tem duas operações. Suponha que a ordem das operações seja:
+[job3 op1 m1][job4 op1 m1][job1 op1 m1][job2 op1 m2][job3 op2 m2][job1 op2 m2][job4 op2 m22][job2 op2 m1]
+
+E seus respectivos tempos de processamento sejam:
+5, 5, 10, 5, 5, 5, 5, 5.
+
+isso significa que no código atual, o tempo total dessa instância seria 45, pois ele simplesmente coloca a operação para processar logo após o tempo de término da operação anterior. E por exemplo, a operação 1 do job 2 que é processada na máquina 2 ela só iria começar a processar no instante 20, pois anteriormente teve outras operações processadas. Mas perceba que ela não precisa esperar até o instante 20 para começar a processar, pois ela é a primeira operação a ser processada na máquina 2, e também é a primeira operação do job 2 a ser processada, logo, ela não tem conflito com outras operações, portanto ela poderia começar no instante 0 da máquina 2 sem problemas. 
+
+A solução que quero implementar aqui é o que chamam de "left shift" e também "right shift", ou seja

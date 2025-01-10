@@ -76,37 +76,36 @@ vector<vector<int>> GeneratePopulation(JIT &j, int N)
 
   return population;
 }
+
 vector<pair<vector<int>, vector<double>>> Fitness(JIT &j, vector<vector<int>> population)
 {
-
-  vector<pair<vector<int>, vector<double>>> currentPopulation; // Vetor para associar jobsVet aos custos
+  vector<pair<vector<int>, vector<double>>> currentPopulation;
 
   for (const auto &jobsVet : population)
   {
-    // Controle de operações processadas e tempos de término
-    vector<bool> lastCompletionTime(j.nJobs, false); // Tempo de término da última operação de cada job
+    // Vetores para rastrear o tempo de término por máquina e por job
+    vector<int> machineFinishTime(j.nMachines, 0);
+    vector<int> jobFinishTime(j.nJobs, 0);
+
     double totalCost = 0.0;
     double totalEarlinessCost = 0.0;
     double totalTardinessCost = 0.0;
-    int actualCompletionTime = 0;
 
     for (int i = 0; i < jobsVet.size(); i++)
     {
-      int currentJob = jobsVet[i] - 1; // Índice do job no vetor de dados
-      int opIndex = 0;                 // Índice da operação atual para o job
+      int currentJob = jobsVet[i] - 1;
+      int opIndex = 0;
 
-      // Controle pra saber se já processei a primeira operação ou não
-      if (lastCompletionTime[currentJob] == false)
+      // Determinar índice da operação atual do job
+      if (jobFinishTime[currentJob] == 0)
       {
         opIndex = 0;
-        lastCompletionTime[currentJob] = true;
       }
       else
       {
-        opIndex = 1;
+        opIndex = 1; // Supondo no máximo 2 operações por job
       }
 
-      // Obter a posição da operação atual do job nos vetores de dados
       int op = j.processingOrder[currentJob][opIndex];
       int machine = j.machine[op];
       int procTime = j.processingTime[op];
@@ -114,32 +113,44 @@ vector<pair<vector<int>, vector<double>>> Fitness(JIT &j, vector<vector<int>> po
       double alpha = j.earliness[op];
       double beta = j.tardiness[op];
 
-      // Calcular o tempo de início considerando o término da última operação calculada
-      int startTime = actualCompletionTime;
-      actualCompletionTime += procTime;
-      int completionTime = actualCompletionTime;
+      // Determinar o menor tempo de início possível
+      int earliestStart = max(machineFinishTime[machine], jobFinishTime[currentJob]);
 
-      // Calcular penalidades de adiantamento e atraso
+      // Ajustar o início para minimizar penalidades
+      int startTime = earliestStart;
+      int completionTime = startTime + procTime;
+
+      // Se o término é muito antes do prazo, tente ajustá-lo para perto do prazo
+      if (completionTime < dueDate)
+      {
+        int maxShift = dueDate - completionTime;
+        startTime += maxShift;
+        completionTime = startTime + procTime;
+      }
+
+      // Atualizar os tempos de término
+      machineFinishTime[machine] = completionTime;
+      jobFinishTime[currentJob] = completionTime;
+
+      // Calcular penalidades
       int earliness = max(dueDate - completionTime, 0);
       int tardiness = max(completionTime - dueDate, 0);
 
-      double earliness_cost = alpha * earliness;
-      double tardiness_cost = beta * tardiness;
-      totalEarlinessCost += earliness_cost;
-      totalTardinessCost += tardiness_cost;
+      double earlinessCost = alpha * earliness;
+      double tardinessCost = beta * tardiness;
 
-      double penaltyCost = alpha * earliness + beta * tardiness;
-
-      // Acumular penalidade no custo total
-      totalCost += penaltyCost;
+      totalCost += earlinessCost + tardinessCost;
+      totalEarlinessCost += earlinessCost;
+      totalTardinessCost += tardinessCost;
     }
 
-    // Adicionar jobsVet e vetor de custos ao vetor de pares
+    // Adicionar o resultado para a sequência atual
     currentPopulation.emplace_back(jobsVet, vector<double>{totalCost, totalEarlinessCost, totalTardinessCost});
   }
 
   return currentPopulation;
 }
+
 void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopulation, int geracoes, SolutionData &result)
 {
 
@@ -152,7 +163,6 @@ void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopu
 
   for (int a = 0; a < geracoes; a++)
   {
-    // Ordenar novamente
     sort(currentPopulation.begin(), currentPopulation.end(),
          [](const pair<vector<int>, vector<double>> &a, const pair<vector<int>, vector<double>> &b)
          {
@@ -224,7 +234,7 @@ vector<pair<vector<int>, vector<double>>> Crossover(
     vector<int> child(parentElite.size(), -1);
     queue<int> queue_;
     vector<int> frequency(j.nJobs + 1, 0);
-    frequency[0] = 999; // Trabalho fictício (não considerado)
+    frequency[0] = 999; // Ele considera a 1º posição como job, mas não deveria. 999 é pra frquência ficar alta e ele ignorar
     int maxFreq = j.nMachines;
 
     int tamVec = parentElite.size();
