@@ -229,6 +229,7 @@ vector<pair<vector<int>, vector<double>>> Fitness(JIT &j, vector<vector<int>> po
 }
 
 */
+
 void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopulation, int geracoes, SolutionData &result)
 {
 
