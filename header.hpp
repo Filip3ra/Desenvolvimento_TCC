@@ -10,6 +10,10 @@
 #include <queue>
 #include <random>
 #include <cmath>
+#include <map>
+#include <tuple>
+#include <utility>
+#include <numeric>
 #include <chrono> // Para medir o tempo
 
 using namespace std;
@@ -28,6 +32,54 @@ struct SolutionData
   double bestSolution;  // Melhor solução
   double earlinessCost; // Custo de earliness
   double tardinessCost; // Custo de tardiness
+};
+
+// Estrutura para representar um nó no grafo
+struct Node
+{
+  int x, y;
+  double cost;
+  bool operator>(const Node &other) const;
+};
+
+/*
+// Representação de um ponto no plano
+struct Point
+{
+  int x, y;
+  bool operator==(const Point &other) const { return x == other.x && y == other.y; }
+  bool operator!=(const Point &other) const { return !(*this == other); } // Adicionado
+  bool operator<(const Point &other) const { return tie(x, y) < tie(other.x, other.y); }
+};
+
+// Representação de uma figura geométrica (obstáculo)
+struct Figure
+{
+  Point bottomLeft;
+  Point bottomRight;
+  Point topLeft;
+  Point topRight;
+};
+
+// Representação do grafo para o caminho mais curto
+struct GraphNode
+{
+  Point point;
+  double distance;
+  bool operator>(const GraphNode &other) const { return distance > other.distance; }
+};
+*/
+
+struct Schedule_
+{
+  int jobId;
+  int operationId;
+  int startTime;
+  int endTime;
+  int machine;
+  int dueDate;
+  double earlinessCost;
+  double tardinessCost;
 };
 
 class JIT
@@ -73,3 +125,18 @@ vector<pair<vector<int>, vector<double>>> Crossover(
     vector<pair<vector<int>, vector<double>>> elite,
     vector<pair<vector<int>, vector<double>>> mutants,
     vector<pair<vector<int>, vector<double>>> remaining);
+/*
+// Declarações das funções para o método gráfico
+vector<Figure> generateObstacles(const JIT &j, const vector<int> &job1, const vector<int> &job2);
+vector<Point> findShortestPath(const vector<Figure> &figures, const Point &start, const Point &end);
+vector<pair<int, double> > graphicMethod(JIT &j);
+*/
+
+vector<Schedule_> processJobs(JIT &j, const vector<int> &jobX, const vector<int> &jobY);
+map<pair<int, int>, vector<pair<pair<int, int>, double>>>
+generateGraph(const vector<Schedule_> &figures, int maxX, int maxY);
+vector<pair<int, int>> findShortestPath(
+    const map<pair<int, int>, vector<pair<pair<int, int>, double>>> &graph,
+    pair<int, int> start,
+    pair<int, int> end);
+SolutionData graphicMethod(JIT &j);

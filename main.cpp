@@ -14,18 +14,18 @@ int main(int argc, char **argv)
   }
 
   string outputFile(argv[1]);
+
+  vector<string> folders = {"loose-equal"};
+  vector<string> files = {"test1_20x10.txt"};
+
   /*
-    vector<string> folders = {"loose-equal"};
-    vector<string> files = {
-        "test1_10x2.txt", "test2_10x2.txt"};*/
-  /**/
   vector<string> folders = {"loose-equal", "loose-tard", "tight-equal", "tight-tard"};
   vector<string> files = {
       "test1_10x2.txt", "test2_10x2.txt", "test1_10x5.txt", "test2_10x5.txt",
       "test1_10x10.txt", "test2_10x10.txt", "test1_15x2.txt", "test2_15x2.txt",
       "test1_15x5.txt", "test2_15x5.txt", "test1_15x10.txt", "test2_15x10.txt",
       "test1_20x2.txt", "test2_20x2.txt", "test1_20x5.txt", "test2_20x5.txt",
-      "test1_20x10.txt", "test2_20x10.txt"};
+      "test1_20x10.txt", "test2_20x10.txt"}; */
 
   int execucoes = 3;       // Número de execuções
   int qtdIndividuos = 481; // Quantidade de indivíduos
@@ -34,6 +34,7 @@ int main(int argc, char **argv)
   cout << "Escolha o algoritmo:\n";
   cout << "1 - BRKGA\n";
   cout << "2 - Giffler-Thompson\n";
+  cout << "3 - Metodo Grafico\n";
   int choice;
   cin >> choice;
 
@@ -83,6 +84,17 @@ int main(int argc, char **argv)
         earliness = currentSol.earlinessCost;
         tardiness = currentSol.tardinessCost;
       }
+      else if (choice == 3)
+      {
+        // Chamada ao método gráfico
+        currentSol = graphicMethod(j);
+
+        // Atualizando os valores para o arquivo de saída
+        bestSol = currentSol.bestSolution;
+        earliness = currentSol.earlinessCost;
+        tardiness = currentSol.tardinessCost;
+      }
+
       // Capturar o tempo final
       auto end = chrono::high_resolution_clock::now();
 
