@@ -1,253 +1,90 @@
 #include "header.hpp"
-#include <queue>
-#include <map>
-#include <set>
-#include <cmath>
-#include <limits>
+#include <iostream>
+#include <vector>
+#include <tuple>
+#include <unordered_map>
 
 using namespace std;
 
-// Gera o grafo a partir das figuras geométricas
-map<pair<int, int>, vector<pair<pair<int, int>, double>>>
-generateGraph(const vector<Schedule_> &figures, int maxX, int maxY)
+vector<Figure> generateFigures(const JIT &j, const vector<int> &jobX, const vector<int> &jobY)
 {
-  map<pair<int, int>, vector<pair<pair<int, int>, double>>> graph;
+  vector<Figure> figures;
 
-  // Adicionar ponto inicial (0, 0)
-  graph[{0, 0}] = {};
+  // Ordenar operações por índice dentro de cada job
+  vector<int> sortedJobX = j.processingOrder[jobX[0] - 1];
+  vector<int> sortedJobY = j.processingOrder[jobY[0] - 1];
+  sort(sortedJobX.begin(), sortedJobX.end());
+  sort(sortedJobY.begin(), sortedJobY.end());
 
-  // Adicionar as conexões entre os nós (diagonal, horizontal, vertical)
-  for (const auto &figure : figures)
+  // Mapear tempos acumulados no eixo X e Y
+  int xTime = 0;
+  unordered_map<int, int> machineCompletionX; // Tempo acumulado por máquina no eixo X
+
+  int yTime = 0;
+  unordered_map<int, int> machineCompletionY; // Tempo acumulado por máquina no eixo Y
+
+  // Iterar sobre as operações dos dois jobs
+  for (size_t i = 0; i < sortedJobX.size(); i++)
   {
-    // Obter os limites da figura
-    int xStart = figure.startTime;
-    int xEnd = figure.endTime;
-    int yStart = figure.dueDate - figure.endTime;
-    int yEnd = figure.dueDate - figure.startTime;
+    int opX = sortedJobX[i]; // Operação do jobX
+    int opY = sortedJobY[i]; // Operação do jobY
 
-    // Gerar as arestas ao redor da figura
-    vector<pair<int, int>> corners = {
-        {xStart, yStart}, {xEnd, yStart}, {xEnd, yEnd}, {xStart, yEnd}};
-    for (size_t i = 0; i < corners.size(); ++i)
-    {
-      for (size_t j = i + 1; j < corners.size(); ++j)
-      {
-        double distance = hypot(corners[j].first - corners[i].first,
-                                corners[j].second - corners[i].second);
-        graph[corners[i]].emplace_back(corners[j], distance);
-        graph[corners[j]].emplace_back(corners[i], distance);
-      }
-    }
+    int machineX = j.machine[opX]; // Máquina da operação do jobX
+    int machineY = j.machine[opY]; // Máquina da operação do jobY
+
+    // Determinar os tempos acumulados para as máquinas
+    int startX = machineCompletionX[machineX];
+    int endX = startX + j.processingTime[opX];
+
+    int startY = machineCompletionY[machineY];
+    int endY = startY + j.processingTime[opY];
+
+    // Criar a figura baseada nos tempos e máquinas
+    Figure fig;
+    fig.corners = {{startX, startY}, {endX, startY}, {endX, endY}, {startX, endY}};
+    figures.push_back(fig);
+
+    // Atualizar os tempos acumulados
+    machineCompletionX[machineX] = endX;
+    machineCompletionY[machineY] = endY;
   }
 
-  // Adicionar conexões para a extremidade do plano
-  graph[{maxX, maxY}] = {};
-
-  return graph;
+  return figures;
 }
 
-vector<Schedule_> processJobs(JIT &j, const vector<int> &jobX, const vector<int> &jobY)
+// Método gráfico principal
+void graphicMethod(const JIT &j)
 {
-  vector<Schedule_> schedule;
-
-  // Controle dos tempos de término das máquinas e jobs
-  vector<int> machineFinishTime(j.nMachines, 0);
-  vector<int> jobFinishTimeX(jobX.size(), 0);
-  vector<int> jobFinishTimeY(jobY.size(), 0);
-  vector<size_t> jobXIndex(jobX.size(), 0);
-  vector<size_t> jobYIndex(jobY.size(), 0);
-
-  while (true)
-  {
-    int minTimeX = numeric_limits<int>::max();
-    int minTimeY = numeric_limits<int>::max();
-    int nextJobX = -1;
-    int nextJobY = -1;
-    bool processJobX = true;
-
-    // Encontrar próxima operação no eixo X
-    for (size_t i = 0; i < jobX.size(); i++)
-    {
-      if (jobXIndex[i] < j.processingOrder[jobX[i] - 1].size())
-      {
-        int opIndex = jobXIndex[i];
-        int op = j.processingOrder[jobX[i] - 1][opIndex];
-        int readyTime = max(machineFinishTime[j.machine[op]], jobFinishTimeX[i]);
-
-        if (readyTime < minTimeX)
-        {
-          minTimeX = readyTime;
-          nextJobX = i;
-        }
-      }
-    }
-
-    // Encontrar próxima operação no eixo Y
-    for (size_t i = 0; i < jobY.size(); i++)
-    {
-      if (jobYIndex[i] < j.processingOrder[jobY[i] - 1].size())
-      {
-        int opIndex = jobYIndex[i];
-        int op = j.processingOrder[jobY[i] - 1][opIndex];
-        int readyTime = max(machineFinishTime[j.machine[op]], jobFinishTimeY[i]);
-
-        if (readyTime < minTimeY)
-        {
-          minTimeY = readyTime;
-          nextJobY = i;
-        }
-      }
-    }
-
-    // Parar se não houver mais operações a serem processadas
-    if (nextJobX == -1 && nextJobY == -1)
-      break;
-    /*
-        // Resolver concorrência com base na data de entrega
-        if (nextJobX != -1 && nextJobY != -1)
-        {
-          int opX = j.processingOrder[jobX[nextJobX] - 1][jobXIndex[nextJobX]];
-          int opY = j.processingOrder[jobY[nextJobY] - 1][jobYIndex[nextJobY]];
-          processJobX = (j.dueDate[opX] <= j.dueDate[opY]);
-        }
-        else if (nextJobX == -1)
-        {
-          processJobX = false;
-        }*/
-
-    // Processar a operação escolhida
-    if (processJobX)
-    {
-      int opIndex = jobXIndex[nextJobX];
-      int op = j.processingOrder[jobX[nextJobX] - 1][opIndex];
-      int startTime = max(machineFinishTime[j.machine[op]], jobFinishTimeX[nextJobX]);
-      int endTime = startTime + j.processingTime[op];
-
-      schedule.push_back({jobX[nextJobX], opIndex, startTime, endTime, j.machine[op],
-                          j.dueDate[op], 0.0, 0.0});
-
-      machineFinishTime[j.machine[op]] = endTime;
-      jobFinishTimeX[nextJobX] = endTime;
-      jobXIndex[nextJobX]++;
-    }
-    else
-    {
-      int opIndex = jobYIndex[nextJobY];
-      int op = j.processingOrder[jobY[nextJobY] - 1][opIndex];
-      int startTime = max(machineFinishTime[j.machine[op]], jobFinishTimeY[nextJobY]);
-      int endTime = startTime + j.processingTime[op];
-
-      schedule.push_back({jobY[nextJobY], opIndex, startTime, endTime, j.machine[op],
-                          j.dueDate[op], 0.0, 0.0});
-
-      machineFinishTime[j.machine[op]] = endTime;
-      jobFinishTimeY[nextJobY] = endTime;
-      jobYIndex[nextJobY]++;
-    }
-  }
-
-  return schedule;
-}
-
-// Encontra o caminho mínimo usando Dijkstra
-vector<pair<int, int>> findShortestPath(
-    const map<pair<int, int>, vector<pair<pair<int, int>, double>>> &graph,
-    pair<int, int> start,
-    pair<int, int> end)
-{
-  priority_queue<Node, vector<Node>, greater<Node>> pq;
-  map<pair<int, int>, double> dist;
-  map<pair<int, int>, pair<int, int>> prev;
-  set<pair<int, int>> visited;
-
-  // Inicializar distâncias
-  for (const auto &entry : graph)
-  {
-    dist[entry.first] = numeric_limits<double>::infinity();
-  }
-  dist[start] = 0.0;
-
-  pq.push({start.first, start.second, 0.0});
-
-  while (!pq.empty())
-  {
-    Node current = pq.top();
-    pq.pop();
-    pair<int, int> currentNode = {current.x, current.y};
-
-    if (visited.count(currentNode))
-      continue;
-    visited.insert(currentNode);
-
-    if (currentNode == end)
-      break;
-
-    for (const auto &neighbor : graph.at(currentNode))
-    {
-      pair<int, int> nextNode = neighbor.first;
-      double weight = neighbor.second;
-
-      if (dist[currentNode] + weight < dist[nextNode])
-      {
-        dist[nextNode] = dist[currentNode] + weight;
-        prev[nextNode] = currentNode;
-        pq.push({nextNode.first, nextNode.second, dist[nextNode]});
-      }
-    }
-  }
-
-  // Reconstituir o caminho
-  vector<pair<int, int>> path;
-  for (pair<int, int> at = end; at != start; at = prev[at])
-  {
-    path.push_back(at);
-  }
-  path.push_back(start);
-  reverse(path.begin(), path.end());
-  return path;
-}
-
-// Modificado método gráfico para usar caminho mínimo
-SolutionData graphicMethod(JIT &j)
-{
-  SolutionData result;
   vector<int> jobsVet(j.nJobs);
-  iota(jobsVet.begin(), jobsVet.end(), 1);
+  iota(jobsVet.begin(), jobsVet.end(), 1); // Lista de jobs [1, 2, ..., nJobs]
 
-  vector<Schedule_> fullSchedule_;
-
-  while (jobsVet.size() > 1)
+  // Processar dois jobs de cada vez
+  for (size_t i = 0; i < jobsVet.size(); i += 2)
   {
-    size_t half = jobsVet.size() / 2;
-    vector<int> jobX(jobsVet.begin(), jobsVet.begin() + half);
-    vector<int> jobY(jobsVet.begin() + half, jobsVet.end());
+    vector<int> jobX, jobY;
 
-    auto schedule_ = processJobs(j, jobX, jobY);
+    // Eixo X: primeiro job ou acumulados (para jobs adicionais)
+    jobX.push_back(jobsVet[i]);
+    if (i + 1 < jobsVet.size()) // Evitar overflow
+      jobY.push_back(jobsVet[i + 1]);
 
-    // Gerar figuras geométricas para o grafo
-    auto graph = generateGraph(schedule_, 100, 100); // Suponha limites do plano 100x100
+    // Gerar figuras para o par atual de jobs
+    auto figures = generateFigures(j, jobX, jobY);
 
-    // Encontrar caminho mínimo no grafo
-    auto path = findShortestPath(graph, {0, 0}, {100, 100});
+    // Exibir as coordenadas das figuras geradas
+    cout << "Figuras entre Job " << jobX[0];
+    if (!jobY.empty())
+      cout << " e Job " << jobY[0];
+    cout << ":\n";
 
-    // Atualizar o agendamento com base no caminho
-    for (const auto &point : path)
+    for (const auto &fig : figures)
     {
-      // Atualizar conforme o caminho define (requer mapeamento para operações reais)
+      cout << "Figura: ";
+      for (const auto &corner : fig.corners)
+      {
+        cout << "(" << corner.first << ", " << corner.second << ") ";
+      }
+      cout << "\n";
     }
-
-    jobsVet.erase(jobsVet.begin(), jobsVet.begin() + half);
   }
-
-  // Calcular penalidades
-  for (const auto &entry : fullSchedule_)
-  {
-    int earliness = max(entry.dueDate - entry.endTime, 0);
-    int tardiness = max(entry.endTime - entry.dueDate, 0);
-    result.earlinessCost += earliness;
-    result.tardinessCost += tardiness;
-  }
-
-  result.bestSolution = result.earlinessCost + result.tardinessCost;
-  return result;
 }

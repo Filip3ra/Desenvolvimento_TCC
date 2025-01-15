@@ -16,7 +16,7 @@ int main(int argc, char **argv)
   string outputFile(argv[1]);
 
   vector<string> folders = {"loose-equal"};
-  vector<string> files = {"test1_20x10.txt"};
+  vector<string> files = {"test1_2x2.txt"};
 
   /*
   vector<string> folders = {"loose-equal", "loose-tard", "tight-equal", "tight-tard"};
@@ -87,12 +87,12 @@ int main(int argc, char **argv)
       else if (choice == 3)
       {
         // Chamada ao método gráfico
-        currentSol = graphicMethod(j);
+        graphicMethod(j);
 
         // Atualizando os valores para o arquivo de saída
-        bestSol = currentSol.bestSolution;
-        earliness = currentSol.earlinessCost;
-        tardiness = currentSol.tardinessCost;
+        // bestSol = currentSol.bestSolution;
+        // earliness = currentSol.earlinessCost;
+        // tardiness = currentSol.tardinessCost;
       }
 
       // Capturar o tempo final

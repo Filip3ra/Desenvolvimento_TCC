@@ -34,12 +34,9 @@ struct SolutionData
   double tardinessCost; // Custo de tardiness
 };
 
-// Estrutura para representar um nó no grafo
-struct Node
+struct Figure
 {
-  int x, y;
-  double cost;
-  bool operator>(const Node &other) const;
+  vector<pair<int, int>> corners; // Pontos das quinas da figura
 };
 
 /*
@@ -125,18 +122,6 @@ vector<pair<vector<int>, vector<double>>> Crossover(
     vector<pair<vector<int>, vector<double>>> elite,
     vector<pair<vector<int>, vector<double>>> mutants,
     vector<pair<vector<int>, vector<double>>> remaining);
-/*
-// Declarações das funções para o método gráfico
-vector<Figure> generateObstacles(const JIT &j, const vector<int> &job1, const vector<int> &job2);
-vector<Point> findShortestPath(const vector<Figure> &figures, const Point &start, const Point &end);
-vector<pair<int, double> > graphicMethod(JIT &j);
-*/
 
-vector<Schedule_> processJobs(JIT &j, const vector<int> &jobX, const vector<int> &jobY);
-map<pair<int, int>, vector<pair<pair<int, int>, double>>>
-generateGraph(const vector<Schedule_> &figures, int maxX, int maxY);
-vector<pair<int, int>> findShortestPath(
-    const map<pair<int, int>, vector<pair<pair<int, int>, double>>> &graph,
-    pair<int, int> start,
-    pair<int, int> end);
-SolutionData graphicMethod(JIT &j);
+void graphicMethod(const JIT &j);
+vector<Figure> generateFigures(const JIT &j, const vector<int> &jobX, const vector<int> &jobY);
