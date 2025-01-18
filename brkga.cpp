@@ -50,10 +50,10 @@ SolutionData brkga(JIT &j, int N, int geracoes)
   JIT aux = j;                                                     // Copiar instância para evitar alterações
 
   // Gerar população com o primeiro indivíduo fixado
-  vector<vector<int>> population = GeneratePopulation(j, N);
+  // vector<vector<int>> population = GeneratePopulation(j, N);
   SolutionData s = gifferThompson(j);
 
-  vector<pair<vector<int>, vector<double>>> currentPopulation = Fitness(j, population, s);
+  // vector<pair<vector<int>, vector<double>>> currentPopulation = Fitness(j, population, s);
 
   // printCurrentPopulation(currentPopulation);
 

@@ -4,6 +4,16 @@
 
 using namespace std;
 
+void printCandidates(const vector<tuple<int, int, int>> &candidates)
+{
+  for (const auto &[start_time, job, operation_index] : candidates)
+  {
+    cout << "Start Time: " << start_time
+         << ", Job: " << job
+         << ", Operation Index: " << operation_index << endl;
+  }
+}
+
 SolutionData gifferThompson(JIT &j)
 {
 
@@ -21,11 +31,17 @@ SolutionData gifferThompson(JIT &j)
   // Lista de operações pendentes
   vector<pair<int, int>> pendingOperations; // <job, operation_index>
 
+  // cout << "njobs: " << j.nJobs << endl;
+
+  // Sempre um job e o valor 0 como par
   for (int job = 0; job < j.nJobs; ++job)
   {
     if (!j.processingOrder[job].empty())
     {
+      cout << "processingOrder[job][0]: " << j.processingOrder[job][0] << ", " << j.processingOrder[job][1] << endl;
       pendingOperations.emplace_back(job, 0);
+      // cout << "pendingOperations[first]: " << pendingOperations[job].first << endl;
+      // cout << "pendingOperations[second]: " << pendingOperations[job].second << endl;
     }
   }
 
@@ -39,15 +55,18 @@ SolutionData gifferThompson(JIT &j)
     // Lista global com todas as operações de todos os jobs
     vector<tuple<int, int, int>> candidates; // <start_time, job, operation_index>
 
-    for (auto &[job, opIndex] : pendingOperations)
+    for (auto &[job, opIndex] : pendingOperations) // Atribui os valores do par para job e opIndex
     {
       int op = j.processingOrder[job][opIndex];
+      // cout << "op: " << op << endl;
       int machine = j.machine[op];
       int procTime = j.processingTime[op];
 
       int startTime = max(machineFinishTime[machine], jobFinishTime[job]);
       candidates.emplace_back(startTime, job, opIndex);
     }
+
+    // printCandidates(candidates);
 
     // Selecionar a operação com menor tempo de início
     auto [startTime, selectedJob, selectedOpIndex] = *min_element(

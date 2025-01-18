@@ -77,3 +77,4 @@ vector<pair<vector<int>, vector<double>>> Crossover(
     vector<pair<vector<int>, vector<double>>> remaining);
 
 void printCurrentPopulation(const vector<pair<vector<int>, vector<double>>> &currentPopulation);
+void printCandidates(const vector<tuple<int, int, int>> &candidates);
