@@ -50,16 +50,16 @@ SolutionData brkga(JIT &j, int N, int geracoes)
   JIT aux = j;                                                     // Copiar instância para evitar alterações
 
   // Gerar população com o primeiro indivíduo fixado
-  // vector<vector<int>> population = GeneratePopulation(j, N);
+  vector<vector<int>> population = GeneratePopulation(j, N);
   SolutionData s = gifferThompson(j);
 
-  // vector<pair<vector<int>, vector<double>>> currentPopulation = Fitness(j, population, s);
+  vector<pair<vector<int>, vector<double>>> currentPopulation = Fitness(j, population, s);
 
   // printCurrentPopulation(currentPopulation);
 
-  // organizeElite(aux, currentPopulation, geracoes, result);
+  organizeElite(aux, currentPopulation, geracoes, result);
 
-  //   organizeElite(aux, Fitness(j, population, s.currentSchedule), geracoes, result);
+  // organizeElite(aux, Fitness(j, population, s.currentSchedule), geracoes, result);
   return result;
 }
 
@@ -151,17 +151,17 @@ vector<pair<vector<int>, vector<double>>> Fitness(JIT &j, vector<vector<int>> po
   int lastPos = population.size() - 1;
 
   int contador = 0;
-
-  cout << "population[0].size(): " << population[0].size() << endl;
-  for (int i = 0; i < population.size(); i++)
-  {
-    cout << "Variacao " << i + 1 << ": [ ";
-    for (int k = 0; k < population[0].size(); k++)
+  /*
+    // cout << "population[0].size(): " << population[0].size() << endl;
+    for (int i = 0; i < population.size(); i++)
     {
-      cout << population[i][k] << " ";
-    }
-    cout << "]" << endl;
-  }
+      cout << "Variacao " << i + 1 << ": [ ";
+      for (int k = 0; k < population[0].size(); k++)
+      {
+        cout << population[i][k] << " ";
+      }
+      cout << "]" << endl;
+    }*/
 
   for (const auto &jobsVet : population)
   {
@@ -444,10 +444,10 @@ void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopu
     vector<pair<vector<int>, vector<double>>> remaining(currentPopulation.begin() + eliteSize,
                                                         currentPopulation.begin() + eliteSize + remainingSize);
 
-    cout << " me chamaram " << endl;
-    // Combinar para nova população
+    // cout << " me chamaram " << endl;
+    //  Combinar para nova população
     vector<pair<vector<int>, vector<double>>> newPopulation = Crossover(j, elite, mutants, remaining);
-    cout << " respondi " << endl;
+    // cout << " respondi " << endl;
 
     currentPopulation.clear();
     currentPopulation = newPopulation; // Corrigir para tipos compatíveis
@@ -506,7 +506,7 @@ vector<pair<vector<int>, vector<double>>> Crossover(
     int tamVec = parentElite.size(); // 20
     bool satisfied = true;
 
-    cout << " n = " << n << endl;
+    // cout << " n = " << n << endl;
 
     for (int i = 0; i <= tamVec; ++i)
     {
