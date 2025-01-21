@@ -60,7 +60,12 @@ SolutionData brkga(JIT &j, int N, int generations, int choice)
     population = GeneratePopulation(j, N);
     organizeElite(aux, Fitness_v2(j, GeneratePopulation(j, N)), generations, result, choice);
   }
-  else if (choice == 3) // V2 + Giffler
+  else if (choice == 3) // V3
+  {
+    population = GeneratePopulation(j, N);
+    organizeElite(aux, Fitness_v3(j, GeneratePopulation(j, N)), generations, result, choice);
+  }
+  else if (choice == 4) // V2 + Giffler
   {
     population = GeneratePopulation(j, N);
     SolutionData s = gifferThompson(j); // Indivíduo gerado pelo giffler
@@ -170,19 +175,22 @@ void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopu
     {
       mutants = Fitness_v1(j, GeneratePopulation(j, eliteSize));
     }
-    else if (choice == 2 || choice == 3)
+    else if (choice == 3)
+    {
+      mutants = Fitness_v3(j, GeneratePopulation(j, eliteSize));
+    }
+    else if (choice == 2 || choice == 4)
     {
       mutants = Fitness_v2(j, GeneratePopulation(j, eliteSize));
     }
+
     // Restante
     int remainingSize = totalSize - eliteSize - mutants.size();
     vector<pair<vector<int>, vector<double>>> remaining(currentPopulation.begin() + eliteSize,
                                                         currentPopulation.begin() + eliteSize + remainingSize);
 
-    // cout << " me chamaram " << endl;
     //  Combinar para nova população
     vector<pair<vector<int>, vector<double>>> newPopulation = Crossover(j, elite, mutants, remaining, choice);
-    // cout << " respondi " << endl;
 
     currentPopulation.clear();
     currentPopulation = newPopulation; // Corrigir para tipos compatíveis
@@ -324,7 +332,12 @@ vector<pair<vector<int>, vector<double>>> Crossover(
       auto childFitness = Fitness_v1(j, {child})[0].second;
       newPopulation.emplace_back(child, childFitness);
     }
-    else if (choice == 2 || choice == 3)
+    else if (choice == 3)
+    {
+      auto childFitness = Fitness_v3(j, {child})[0].second;
+      newPopulation.emplace_back(child, childFitness);
+    }
+    else if (choice == 2 || choice == 4)
     {
       auto childFitness = Fitness_v2(j, {child})[0].second; // Obter diretamente o vetor de fitness
       newPopulation.emplace_back(child, childFitness);      // Adicionar à nova população

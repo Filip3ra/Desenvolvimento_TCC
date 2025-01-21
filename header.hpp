@@ -71,6 +71,8 @@ vector<pair<vector<int>, vector<double>>> GifflerFitness(JIT &j, vector<vector<i
 vector<pair<vector<int>, vector<double>>> Fitness(JIT &j, vector<vector<int>> population, SolutionData s);
 vector<pair<vector<int>, vector<double>>> Fitness_v1(JIT &j, vector<vector<int>> population);
 vector<pair<vector<int>, vector<double>>> Fitness_v2(JIT &j, vector<vector<int>> population);
+vector<pair<vector<int>, vector<double>>> Fitness_v3(JIT &j, vector<vector<int>> population);
+
 void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopulation, int geracoes, SolutionData &bestSolution, int choice);
 vector<pair<vector<int>, vector<double>>> Crossover(
     JIT &j,
