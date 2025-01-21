@@ -64,17 +64,20 @@ public:
   void printInstance();
 };
 
-SolutionData brkga(JIT &j, int N, int geracoes);
+SolutionData brkga(JIT &j, int N, int generations, int choice);
 SolutionData gifferThompson(JIT &j);
 vector<vector<int>> GeneratePopulation(JIT &j, int N);
+vector<pair<vector<int>, vector<double>>> GifflerFitness(JIT &j, vector<vector<int>> population, SolutionData s);
 vector<pair<vector<int>, vector<double>>> Fitness(JIT &j, vector<vector<int>> population, SolutionData s);
-vector<pair<vector<int>, vector<double>>> CalcFitness_v2(JIT &j, vector<vector<int>> population);
-void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopulation, int geracoes, SolutionData &bestSolution);
+vector<pair<vector<int>, vector<double>>> Fitness_v1(JIT &j, vector<vector<int>> population);
+vector<pair<vector<int>, vector<double>>> Fitness_v2(JIT &j, vector<vector<int>> population);
+void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopulation, int geracoes, SolutionData &bestSolution, int choice);
 vector<pair<vector<int>, vector<double>>> Crossover(
     JIT &j,
     vector<pair<vector<int>, vector<double>>> elite,
     vector<pair<vector<int>, vector<double>>> mutants,
-    vector<pair<vector<int>, vector<double>>> remaining);
+    vector<pair<vector<int>, vector<double>>> remaining,
+    int choice);
 
 void printCurrentPopulation(const vector<pair<vector<int>, vector<double>>> &currentPopulation);
 void printCandidates(const vector<tuple<int, int, int>> &candidates);

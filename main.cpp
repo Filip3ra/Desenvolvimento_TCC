@@ -14,29 +14,32 @@ int main(int argc, char **argv)
   }
 
   string outputFile(argv[1]);
+
+  vector<string> folders = {"loose-equal"};
+  vector<string> files = {"test1_10x2.txt", "test2_10x2.txt", "test1_10x5.txt", "test2_10x5.txt"};
+
   /*
-    vector<string> folders = {"loose-equal"};
-    vector<string> files = {"test1_10x2.txt", "test2_10x2.txt", "test1_10x5.txt", "test2_10x5.txt"};
-    */
-  vector<string> folders = {"loose-equal", "loose-tard", "tight-equal", "tight-tard"};
-  vector<string> files = {
-      "test1_10x2.txt", "test2_10x2.txt", "test1_10x5.txt", "test2_10x5.txt",
-      "test1_10x10.txt", "test2_10x10.txt", "test1_15x2.txt", "test2_15x2.txt",
-      "test1_15x5.txt", "test2_15x5.txt", "test1_15x10.txt", "test2_15x10.txt",
-      "test1_20x2.txt", "test2_20x2.txt", "test1_20x5.txt", "test2_20x5.txt",
-      "test1_20x10.txt", "test2_20x10.txt"};
+ vector<string> folders = {"loose-equal", "loose-tard", "tight-equal", "tight-tard"};
+ vector<string> files = {
+     "test1_10x2.txt", "test2_10x2.txt", "test1_10x5.txt", "test2_10x5.txt",
+     "test1_10x10.txt", "test2_10x10.txt", "test1_15x2.txt", "test2_15x2.txt",
+     "test1_15x5.txt", "test2_15x5.txt", "test1_15x10.txt", "test2_15x10.txt",
+     "test1_20x2.txt", "test2_20x2.txt", "test1_20x5.txt", "test2_20x5.txt",
+     "test1_20x10.txt", "test2_20x10.txt"};*/
   /*
-    int execucoes = 3;       // Número de execuções
-    int qtdIndividuos = 481; // Quantidade de indivíduos
-    int geracoes = 514;      // Número de gerações
+    int executions = 3;       // Número de execuções
+    int individuals = 481; // Quantidade de indivíduos
+    int generations = 514;      // Número de gerações
   */
-  int execucoes = 3;       // Número de execuções
-  int qtdIndividuos = 481; // Quantidade de indivíduos
-  int geracoes = 514;      // Número de gerações
+  int executions = 1;    // Número de execuções
+  int individuals = 481; // Quantidade de indivíduos
+  int generations = 514; // Número de gerações
 
   cout << "Escolha o algoritmo:\n";
-  cout << "1 - BRKGA\n";
-  cout << "2 - Giffler-Thompson\n";
+  cout << "1 - BRKGA V1\n";
+  cout << "2 - BRKGA V2\n";
+  cout << "3 - BRKGA + Giffler-Thompson\n";
+  cout << "4 - Giffler-Thompson\n";
   int choice;
   cin >> choice;
 
@@ -69,11 +72,11 @@ int main(int argc, char **argv)
 
       j.parseInstance(filePath);
 
-      if (choice == 1)
+      if (choice == 1) // BRKGA V1
       {
-        for (size_t i = 0; i < execucoes; i++)
+        for (size_t i = 0; i < executions; i++)
         {
-          currentSol = brkga(j, qtdIndividuos, geracoes);
+          currentSol = brkga(j, individuals, generations, choice);
           if (currentSol.bestSolution < bestSol)
           {
             bestSol = currentSol.bestSolution;
@@ -82,7 +85,33 @@ int main(int argc, char **argv)
           }
         }
       }
-      else if (choice == 2)
+      else if (choice == 2) // BRKGA V2
+      {
+        for (size_t i = 0; i < executions; i++)
+        {
+          currentSol = brkga(j, individuals, generations, choice);
+          if (currentSol.bestSolution < bestSol)
+          {
+            bestSol = currentSol.bestSolution;
+            earliness = currentSol.earlinessCost;
+            tardiness = currentSol.tardinessCost;
+          }
+        }
+      }
+      else if (choice == 3) // BRKGA + Giffler
+      {
+        for (size_t i = 0; i < executions; i++)
+        {
+          currentSol = brkga(j, individuals, generations, choice);
+          if (currentSol.bestSolution < bestSol)
+          {
+            bestSol = currentSol.bestSolution;
+            earliness = currentSol.earlinessCost;
+            tardiness = currentSol.tardinessCost;
+          }
+        }
+      }
+      else if (choice == 4) // Giffler Thompson
       {
         currentSol = gifferThompson(j);
         bestSol = currentSol.bestSolution;

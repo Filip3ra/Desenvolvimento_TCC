@@ -44,22 +44,30 @@ void printCurrentPopulation(const vector<pair<vector<int>, vector<double>>> &cur
   }
 }
 
-SolutionData brkga(JIT &j, int N, int geracoes)
+SolutionData brkga(JIT &j, int N, int generations, int choice)
 {
   SolutionData result = {numeric_limits<double>::max(), 0.0, 0.0}; // Inicializa com valores padrão
   JIT aux = j;                                                     // Copiar instância para evitar alterações
+  vector<vector<int>> population;
 
-  // Gerar população com o primeiro indivíduo fixado
-  vector<vector<int>> population = GeneratePopulation(j, N);
-  SolutionData s = gifferThompson(j);
+  if (choice == 1) // V1
+  {
+    population = GeneratePopulation(j, N);
+    organizeElite(aux, Fitness_v1(j, GeneratePopulation(j, N)), generations, result, choice);
+  }
+  else if (choice == 2) // V2
+  {
+    population = GeneratePopulation(j, N);
+    organizeElite(aux, Fitness_v2(j, GeneratePopulation(j, N)), generations, result, choice);
+  }
+  else if (choice == 3) // V2 + Giffler
+  {
+    population = GeneratePopulation(j, N);
+    SolutionData s = gifferThompson(j); // Indivíduo gerado pelo giffler
+    vector<pair<vector<int>, vector<double>>> currentPopulation = GifflerFitness(j, population, s);
+    organizeElite(aux, currentPopulation, generations, result, choice);
+  }
 
-  vector<pair<vector<int>, vector<double>>> currentPopulation = Fitness(j, population, s);
-
-  // printCurrentPopulation(currentPopulation);
-
-  organizeElite(aux, currentPopulation, geracoes, result);
-
-  // organizeElite(aux, Fitness(j, population, s.currentSchedule), geracoes, result);
   return result;
 }
 
@@ -130,287 +138,7 @@ vector<vector<int>> GeneratePopulation(JIT &j, int N)
   return population;
 }
 
-/* VERSÃO 2 com indivíduo do giffler thompsom*/
-vector<pair<vector<int>, vector<double>>> Fitness(JIT &j, vector<vector<int>> population, SolutionData s = {})
-{
-
-  // cout << "entrei Fit" << endl;
-  vector<pair<vector<int>, vector<double>>> currentPopulation;
-
-  vector<pair<int, int>> gSol;
-  gSol = s.currentSchedule;
-  vector<int> jobGiffler, posGiffler;
-
-  for (const auto &p : gSol) // Itera sobre cada par em gSol
-  {
-    jobGiffler.push_back(p.first);
-    posGiffler.push_back(p.second);
-  }
-
-  population.push_back(jobGiffler); // Insiro instância do giffler thompsom
-  int lastPos = population.size() - 1;
-
-  int contador = 0;
-  /*
-    // cout << "population[0].size(): " << population[0].size() << endl;
-    for (int i = 0; i < population.size(); i++)
-    {
-      cout << "Variacao " << i + 1 << ": [ ";
-      for (int k = 0; k < population[0].size(); k++)
-      {
-        cout << population[i][k] << " ";
-      }
-      cout << "]" << endl;
-    }*/
-
-  for (const auto &jobsVet : population)
-  {
-
-    // cout << "cont = " << contador << endl;
-
-    // Vetores para rastrear o tempo de término por máquina e por job
-    vector<int> machineFinishTime(j.nMachines, 0);
-    vector<int> jobFinishTime(j.nJobs, 0);
-
-    double totalCost = 0.0;
-    double totalEarlinessCost = 0.0;
-    double totalTardinessCost = 0.0;
-
-    // cout << "jobsVet.size() = " << jobsVet.size() << endl;
-
-    for (int i = 0; i < jobsVet.size(); i++)
-    {
-      // cout << "i = " << i << endl;
-      int currentJob = jobsVet[i] - 1;
-      int opIndex = 0;
-
-      // cout << "currentJob = " << currentJob << endl;
-
-      // Determinar índice da operação atual do job
-      if (jobFinishTime[currentJob] == 0)
-      {
-        opIndex = 0;
-      }
-      else
-      {
-        opIndex = 1; // Supondo no máximo 2 operações por job
-      }
-
-      int op;
-      int machine;
-      int procTime;
-      int dueDate;
-      double alpha;
-      double beta;
-
-      if (contador == lastPos) // Se for a instância do giffler, a sequência de operações já foi definida, então basta acessar ela
-      {
-        // cout << "OPA ENTREI" << endl;
-        op = posGiffler[i];
-        machine = j.machine[op];
-        procTime = j.processingTime[op];
-        dueDate = j.dueDate[op];
-        alpha = j.earliness[op];
-        beta = j.tardiness[op];
-      }
-      else
-      {
-        op = j.processingOrder[currentJob][opIndex];
-        machine = j.machine[op];
-        procTime = j.processingTime[op];
-        dueDate = j.dueDate[op];
-        alpha = j.earliness[op];
-        beta = j.tardiness[op];
-      }
-
-      // cout << opIndex << " ";
-
-      // Determinar o menor tempo de início possível
-      int earliestStart = max(machineFinishTime[machine], jobFinishTime[currentJob]);
-
-      // Ajustar o início para minimizar penalidades
-      int startTime = earliestStart;
-      int completionTime = startTime + procTime;
-
-      // Se o término é muito antes do prazo, tente ajustá-lo para perto do prazo
-      if (completionTime < dueDate)
-      {
-        int maxShift = dueDate - completionTime;
-        startTime += maxShift;
-        completionTime = startTime + procTime;
-      }
-
-      // Atualizar os tempos de término
-      machineFinishTime[machine] = completionTime;
-      jobFinishTime[currentJob] = completionTime;
-
-      // Calcular penalidades
-      int earliness = max(dueDate - completionTime, 0);
-      int tardiness = max(completionTime - dueDate, 0);
-
-      double earlinessCost = alpha * earliness;
-      double tardinessCost = beta * tardiness;
-
-      totalCost += earlinessCost + tardinessCost;
-      totalEarlinessCost += earlinessCost;
-      totalTardinessCost += tardinessCost;
-    }
-
-    // Adicionar o resultado para a sequência atual
-    currentPopulation.emplace_back(jobsVet, vector<double>{totalCost, totalEarlinessCost, totalTardinessCost});
-    contador++;
-  }
-
-  // cout << "sai Fit\n"
-
-  return currentPopulation;
-}
-
-/* VERSÃO 1
-vector<pair<vector<int>, vector<double>>> Fitness(JIT &j, vector<vector<int>> population)
-{
-
-  vector<pair<vector<int>, vector<double>>> currentPopulation; // Vetor para associar jobsVet aos custos
-
-  for (const auto &jobsVet : population)
-  {
-    // Controle de operações processadas e tempos de término
-    vector<bool> lastCompletionTime(j.nJobs, false); // Tempo de término da última operação de cada job
-    double totalCost = 0.0;
-    double totalEarlinessCost = 0.0;
-    double totalTardinessCost = 0.0;
-    int actualCompletionTime = 0;
-
-    for (int i = 0; i < jobsVet.size(); i++)
-    {
-      int currentJob = jobsVet[i] - 1; // Índice do job no vetor de dados
-      int opIndex = 0;                 // Índice da operação atual para o job
-
-      // Controle pra saber se já processei a primeira operação ou não
-      if (lastCompletionTime[currentJob] == false)
-      {
-        opIndex = 0;
-        lastCompletionTime[currentJob] = true;
-      }
-      else
-      {
-        opIndex = 1;
-      }
-
-      // Obter a posição da operação atual do job nos vetores de dados
-      int op = j.processingOrder[currentJob][opIndex];
-      int machine = j.machine[op];
-      int procTime = j.processingTime[op];
-      int dueDate = j.dueDate[op];
-      double alpha = j.earliness[op];
-      double beta = j.tardiness[op];
-
-      // Calcular o tempo de início considerando o término da última operação calculada
-      int startTime = actualCompletionTime;
-      actualCompletionTime += procTime;
-      int completionTime = actualCompletionTime;
-
-      // Calcular penalidades de adiantamento e atraso
-      int earliness = max(dueDate - completionTime, 0);
-      int tardiness = max(completionTime - dueDate, 0);
-
-      double earliness_cost = alpha * earliness;
-      double tardiness_cost = beta * tardiness;
-      totalEarlinessCost += earliness_cost;
-      totalTardinessCost += tardiness_cost;
-
-      double penaltyCost = alpha * earliness + beta * tardiness;
-
-      // Acumular penalidade no custo total
-      totalCost += penaltyCost;
-    }
-
-    // Adicionar jobsVet e vetor de custos ao vetor de pares
-    currentPopulation.emplace_back(jobsVet, vector<double>{totalCost, totalEarlinessCost, totalTardinessCost});
-  }
-
-  return currentPopulation;
-}
-*/
-
-// Essa versão apenas calcula o fitness de qualquer indivíduo que vc passar (versão 2)
-vector<pair<vector<int>, vector<double>>> CalcFitness_v2(JIT &j, vector<vector<int>> population)
-{
-  vector<pair<vector<int>, vector<double>>> currentPopulation;
-
-  for (const auto &jobsVet : population)
-  {
-    // Vetores para rastrear o tempo de término por máquina e por job
-    vector<int> machineFinishTime(j.nMachines, 0);
-    vector<int> jobFinishTime(j.nJobs, 0);
-
-    double totalCost = 0.0;
-    double totalEarlinessCost = 0.0;
-    double totalTardinessCost = 0.0;
-
-    for (int i = 0; i < jobsVet.size(); i++)
-    {
-      int currentJob = jobsVet[i] - 1;
-      int opIndex = 0;
-
-      // Determinar índice da operação atual do job
-      if (jobFinishTime[currentJob] == 0)
-      {
-        opIndex = 0;
-      }
-      else
-      {
-        opIndex = 1; // Supondo no máximo 2 operações por job
-      }
-
-      int op = j.processingOrder[currentJob][opIndex];
-      int machine = j.machine[op];
-      int procTime = j.processingTime[op];
-      int dueDate = j.dueDate[op];
-      double alpha = j.earliness[op];
-      double beta = j.tardiness[op];
-
-      // Determinar o menor tempo de início possível
-      int earliestStart = max(machineFinishTime[machine], jobFinishTime[currentJob]);
-
-      // Ajustar o início para minimizar penalidades
-      int startTime = earliestStart;
-      int completionTime = startTime + procTime;
-
-      // Se o término é muito antes do prazo, tente ajustá-lo para perto do prazo
-      if (completionTime < dueDate)
-      {
-        int maxShift = dueDate - completionTime;
-        startTime += maxShift;
-        completionTime = startTime + procTime;
-      }
-
-      // Atualizar os tempos de término
-      machineFinishTime[machine] = completionTime;
-      jobFinishTime[currentJob] = completionTime;
-
-      // Calcular penalidades
-      int earliness = max(dueDate - completionTime, 0);
-      int tardiness = max(completionTime - dueDate, 0);
-
-      double earlinessCost = alpha * earliness;
-      double tardinessCost = beta * tardiness;
-
-      totalCost += earlinessCost + tardinessCost;
-      totalEarlinessCost += earlinessCost;
-      totalTardinessCost += tardinessCost;
-    }
-
-    // Adicionar o resultado para a sequência atual
-    currentPopulation.emplace_back(jobsVet, vector<double>{totalCost, totalEarlinessCost, totalTardinessCost});
-  }
-
-  // cout << "sai Fit\n"
-
-  return currentPopulation;
-}
-
-void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopulation, int geracoes, SolutionData &result)
+void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopulation, int generations, SolutionData &result, int choice)
 {
 
   // Ordenar currentPopulation pelo custo (menor custo primeiro)
@@ -420,7 +148,7 @@ void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopu
          return a.second[0] < b.second[0]; // Ordenar pelo totalCost
        });
 
-  for (int a = 0; a < geracoes; a++)
+  for (int a = 0; a < generations; a++)
   {
     // Ordenar novamente
     sort(currentPopulation.begin(), currentPopulation.end(),
@@ -437,8 +165,15 @@ void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopu
     vector<pair<vector<int>, vector<double>>> elite(currentPopulation.begin(), currentPopulation.begin() + eliteSize);
 
     // Gerar novos indivíduos
-    vector<pair<vector<int>, vector<double>>> mutants = CalcFitness_v2(j, GeneratePopulation(j, eliteSize));
-
+    vector<pair<vector<int>, vector<double>>> mutants;
+    if (choice == 1)
+    {
+      mutants = Fitness_v1(j, GeneratePopulation(j, eliteSize));
+    }
+    else if (choice == 2 || choice == 3)
+    {
+      mutants = Fitness_v2(j, GeneratePopulation(j, eliteSize));
+    }
     // Restante
     int remainingSize = totalSize - eliteSize - mutants.size();
     vector<pair<vector<int>, vector<double>>> remaining(currentPopulation.begin() + eliteSize,
@@ -446,7 +181,7 @@ void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopu
 
     // cout << " me chamaram " << endl;
     //  Combinar para nova população
-    vector<pair<vector<int>, vector<double>>> newPopulation = Crossover(j, elite, mutants, remaining);
+    vector<pair<vector<int>, vector<double>>> newPopulation = Crossover(j, elite, mutants, remaining, choice);
     // cout << " respondi " << endl;
 
     currentPopulation.clear();
@@ -467,7 +202,7 @@ vector<pair<vector<int>, vector<double>>> Crossover(
     JIT &j,
     vector<pair<vector<int>, vector<double>>> elite,
     vector<pair<vector<int>, vector<double>>> mutants,
-    vector<pair<vector<int>, vector<double>>> remaining)
+    vector<pair<vector<int>, vector<double>>> remaining, int choice)
 {
 
   // Combinar mutants e remaining
@@ -584,8 +319,16 @@ vector<pair<vector<int>, vector<double>>> Crossover(
 
     // cout << "cross 7 depois while" << endl;
     //  Calcular o fitness do filho
-    auto childFitness = CalcFitness_v2(j, {child})[0].second; // Obter diretamente o vetor de fitness
-    newPopulation.emplace_back(child, childFitness);          // Adicionar à nova população
+    if (choice == 1)
+    {
+      auto childFitness = Fitness_v1(j, {child})[0].second;
+      newPopulation.emplace_back(child, childFitness);
+    }
+    else if (choice == 2 || choice == 3)
+    {
+      auto childFitness = Fitness_v2(j, {child})[0].second; // Obter diretamente o vetor de fitness
+      newPopulation.emplace_back(child, childFitness);      // Adicionar à nova população
+    }
   }
 
   return newPopulation;
