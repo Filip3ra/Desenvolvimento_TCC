@@ -14,7 +14,8 @@ int main(int argc, char **argv)
   }
 
   string outputFile(argv[1]);
-  /*
+
+  /* para testes rápidos
     vector<string> folders = {"loose-equal"};
     vector<string> files = {"test1_10x2.txt", "test2_10x2.txt", "test1_10x5.txt", "test2_10x5.txt"};
   */
@@ -26,11 +27,7 @@ int main(int argc, char **argv)
       "test1_15x5.txt", "test2_15x5.txt", "test1_15x10.txt", "test2_15x10.txt",
       "test1_20x2.txt", "test2_20x2.txt", "test1_20x5.txt", "test2_20x5.txt",
       "test1_20x10.txt", "test2_20x10.txt"};
-  /*
-    int executions = 3;       // Número de execuções
-    int individuals = 481; // Quantidade de indivíduos
-    int generations = 514;      // Número de gerações
-  */
+
   int executions = 3;    // Número de execuções
   int individuals = 481; // Quantidade de indivíduos
   int generations = 514; // Número de gerações
@@ -62,9 +59,10 @@ int main(int argc, char **argv)
       // Capturar o tempo inicial
       auto start = chrono::high_resolution_clock::now();
 
-      j = JIT(); // Define uma nova variável toda vez que for ler um arquivo
+      j = JIT(); // Limpa variável toda vez que for ler um novo arquivo
 
       string filePath = "instances/" + folder + "/" + file;
+
       double bestSol = numeric_limits<double>::max();
       double earliness = 0.0;
       double tardiness = 0.0;
@@ -94,6 +92,7 @@ int main(int argc, char **argv)
         earliness = currentSol.earlinessCost;
         tardiness = currentSol.tardinessCost;
       }
+
       // Capturar o tempo final
       auto end = chrono::high_resolution_clock::now();
 

@@ -3,12 +3,12 @@
 #include <cstdlib>
 #include <ctime>
 #include <vector>
-#include <algorithm>     // Para std::sort
-#include <cmath>         // Para ceil
-#include <random>        // crossover
-#include <unordered_map> // crossover
+#include <algorithm>
+#include <cmath>
+#include <random>
+#include <unordered_map>
 #include <queue>
-#include <limits> // Para std::numeric_limits
+#include <limits>
 
 using namespace std;
 
@@ -77,143 +77,7 @@ vector<pair<vector<int>, vector<double>>> Fitness_v1(JIT &j, vector<vector<int>>
   return currentPopulation;
 }
 
-/* Fitness Versão 2 recebendo um indivíduo do giffler thompsom */
-vector<pair<vector<int>, vector<double>>> GifflerFitness(JIT &j, vector<vector<int>> population, SolutionData s = {})
-{
-  // cout << "entrei Fit" << endl;
-  vector<pair<vector<int>, vector<double>>> currentPopulation;
-
-  vector<pair<int, int>> gSol;
-  gSol = s.currentSchedule;
-  vector<int> jobGiffler, posGiffler;
-
-  for (const auto &p : gSol) // Itera sobre cada par em gSol
-  {
-    jobGiffler.push_back(p.first);
-    posGiffler.push_back(p.second);
-  }
-
-  population.push_back(jobGiffler); // Insiro instância do giffler thompsom
-  int lastPos = population.size() - 1;
-
-  int contador = 0;
-  /*
-    // cout << "population[0].size(): " << population[0].size() << endl;
-    for (int i = 0; i < population.size(); i++)
-    {
-      cout << "Variacao " << i + 1 << ": [ ";
-      for (int k = 0; k < population[0].size(); k++)
-      {
-        cout << population[i][k] << " ";
-      }
-      cout << "]" << endl;
-    }*/
-
-  for (const auto &jobsVet : population)
-  {
-
-    // cout << "cont = " << contador << endl;
-
-    // Vetores para rastrear o tempo de término por máquina e por job
-    vector<int> machineFinishTime(j.nMachines, 0);
-    vector<int> jobFinishTime(j.nJobs, 0);
-
-    double totalCost = 0.0;
-    double totalEarlinessCost = 0.0;
-    double totalTardinessCost = 0.0;
-
-    // cout << "jobsVet.size() = " << jobsVet.size() << endl;
-
-    for (int i = 0; i < jobsVet.size(); i++)
-    {
-      // cout << "i = " << i << endl;
-      int currentJob = jobsVet[i] - 1;
-      int opIndex = 0;
-
-      // cout << "currentJob = " << currentJob << endl;
-
-      // Determinar índice da operação atual do job
-      if (jobFinishTime[currentJob] == 0)
-      {
-        opIndex = 0;
-      }
-      else
-      {
-        opIndex = 1; // Supondo no máximo 2 operações por job
-      }
-
-      int op;
-      int machine;
-      int procTime;
-      int dueDate;
-      double alpha;
-      double beta;
-
-      if (contador == lastPos) // Se for a instância do giffler, a sequência de operações já foi definida, então basta acessar ela
-      {
-        // cout << "OPA ENTREI" << endl;
-        op = posGiffler[i];
-        machine = j.machine[op];
-        procTime = j.processingTime[op];
-        dueDate = j.dueDate[op];
-        alpha = j.earliness[op];
-        beta = j.tardiness[op];
-      }
-      else
-      {
-        op = j.processingOrder[currentJob][opIndex];
-        machine = j.machine[op];
-        procTime = j.processingTime[op];
-        dueDate = j.dueDate[op];
-        alpha = j.earliness[op];
-        beta = j.tardiness[op];
-      }
-
-      // cout << opIndex << " ";
-
-      // Determinar o menor tempo de início possível
-      int earliestStart = max(machineFinishTime[machine], jobFinishTime[currentJob]);
-
-      // Ajustar o início para minimizar penalidades
-      int startTime = earliestStart;
-      int completionTime = startTime + procTime;
-
-      // Se o término é muito antes do prazo, tente ajustá-lo para perto do prazo
-      if (completionTime < dueDate)
-      {
-        int maxShift = dueDate - completionTime;
-        startTime += maxShift;
-        completionTime = startTime + procTime;
-      }
-
-      // Atualizar os tempos de término
-      machineFinishTime[machine] = completionTime;
-      jobFinishTime[currentJob] = completionTime;
-
-      // Calcular penalidades
-      int earliness = max(dueDate - completionTime, 0);
-      int tardiness = max(completionTime - dueDate, 0);
-
-      double earlinessCost = alpha * earliness;
-      double tardinessCost = beta * tardiness;
-
-      totalCost += earlinessCost + tardinessCost;
-      totalEarlinessCost += earlinessCost;
-      totalTardinessCost += tardinessCost;
-    }
-
-    // Adicionar o resultado para a sequência atual
-    currentPopulation.emplace_back(jobsVet, vector<double>{totalCost, totalEarlinessCost, totalTardinessCost});
-    contador++;
-  }
-
-  // cout << "sai Fit\n"
-
-  return currentPopulation;
-}
-
-/* Fitness Versão 2 que calcula o fitness de qualquer indivíduo ou
-conjundo de indivíduos que seja repassado. */
+/* Fitness Versão 2 */
 vector<pair<vector<int>, vector<double>>> Fitness_v2(JIT &j, vector<vector<int>> population)
 {
   vector<pair<vector<int>, vector<double>>> currentPopulation;
@@ -287,6 +151,120 @@ vector<pair<vector<int>, vector<double>>> Fitness_v2(JIT &j, vector<vector<int>>
   return currentPopulation;
 }
 
+/* Fitness Versão 2 recebendo um indivíduo do giffler thompsom */
+vector<pair<vector<int>, vector<double>>> GifflerFitness(JIT &j, vector<vector<int>> population, SolutionData s = {})
+{
+  // cout << "entrei Fit" << endl;
+  vector<pair<vector<int>, vector<double>>> currentPopulation;
+
+  vector<pair<int, int>> gSol;
+  gSol = s.currentSchedule;
+  vector<int> jobGiffler, posGiffler;
+
+  for (const auto &p : gSol) // Itera sobre cada par em gSol
+  {
+    jobGiffler.push_back(p.first);
+    posGiffler.push_back(p.second);
+  }
+
+  population.push_back(jobGiffler); // Insiro instância do giffler thompson
+  int lastPos = population.size() - 1;
+
+  int contador = 0;
+
+  for (const auto &jobsVet : population)
+  {
+
+    // Vetores para rastrear o tempo de término por máquina e por job
+    vector<int> machineFinishTime(j.nMachines, 0);
+    vector<int> jobFinishTime(j.nJobs, 0);
+
+    double totalCost = 0.0;
+    double totalEarlinessCost = 0.0;
+    double totalTardinessCost = 0.0;
+
+    for (int i = 0; i < jobsVet.size(); i++)
+    {
+      int currentJob = jobsVet[i] - 1;
+      int opIndex = 0;
+
+      if (jobFinishTime[currentJob] == 0)
+      {
+        opIndex = 0;
+      }
+      else
+      {
+        opIndex = 1;
+      }
+
+      int op;
+      int machine;
+      int procTime;
+      int dueDate;
+      double alpha;
+      double beta;
+
+      // Se for a instância do giffler, as sequências das operações
+      // já foram definidas, então basta acessar elas
+      if (contador == lastPos)
+      {
+        op = posGiffler[i];
+        machine = j.machine[op];
+        procTime = j.processingTime[op];
+        dueDate = j.dueDate[op];
+        alpha = j.earliness[op];
+        beta = j.tardiness[op];
+      }
+      else
+      {
+        op = j.processingOrder[currentJob][opIndex];
+        machine = j.machine[op];
+        procTime = j.processingTime[op];
+        dueDate = j.dueDate[op];
+        alpha = j.earliness[op];
+        beta = j.tardiness[op];
+      }
+
+      // Determinar o menor tempo de início possível
+      int earliestStart = max(machineFinishTime[machine], jobFinishTime[currentJob]);
+
+      // Ajustar o início para minimizar penalidades
+      int startTime = earliestStart;
+      int completionTime = startTime + procTime;
+
+      // Se o término é muito antes do prazo, tente ajustá-lo para perto do prazo
+      if (completionTime < dueDate)
+      {
+        int maxShift = dueDate - completionTime;
+        startTime += maxShift;
+        completionTime = startTime + procTime;
+      }
+
+      // Atualizar os tempos de término
+      machineFinishTime[machine] = completionTime;
+      jobFinishTime[currentJob] = completionTime;
+
+      // Calcular penalidades
+      int earliness = max(dueDate - completionTime, 0);
+      int tardiness = max(completionTime - dueDate, 0);
+
+      double earlinessCost = alpha * earliness;
+      double tardinessCost = beta * tardiness;
+
+      totalCost += earlinessCost + tardinessCost;
+      totalEarlinessCost += earlinessCost;
+      totalTardinessCost += tardinessCost;
+    }
+
+    // Adicionar o resultado para a sequência atual
+    currentPopulation.emplace_back(jobsVet, vector<double>{totalCost, totalEarlinessCost, totalTardinessCost});
+    contador++;
+  }
+
+  return currentPopulation;
+}
+
+/* Fitness versão 3 */
 vector<pair<vector<int>, vector<double>>> Fitness_v3(JIT &j, vector<vector<int>> population)
 {
   vector<pair<vector<int>, vector<double>>> currentPopulation;
@@ -313,7 +291,7 @@ vector<pair<vector<int>, vector<double>>> Fitness_v3(JIT &j, vector<vector<int>>
       }
       else
       {
-        opIndex = 1; // Supondo no máximo 2 operações por job
+        opIndex = 1;
       }
 
       int op = j.processingOrder[currentJob][opIndex];

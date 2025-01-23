@@ -10,53 +10,52 @@
 #include <queue>
 #include <random>
 #include <cmath>
-#include <chrono> // Para medir o tempo
+#include <chrono>
 
 using namespace std;
 
-// matriz: sequence of ops in the machines
+// matriz: sequência de operações nas máquinas
 #define matriz vector<vector<int>>
 
-// Schedule: sequence of ops in the machines + start times
+// Schedule: sequência de operações nas máquinas + start times
 #define Schedule pair<matriz, vector<int>>
 
-// Neighbor: Schedule + move that created the neighbor
 #define Neighbor pair<Schedule, vector<int>>
 
 struct SolutionData
 {
-  double bestSolution;  // Melhor solução
-  double earlinessCost; // Custo de earliness
-  double tardinessCost; // Custo de tardiness
-  vector<pair<int, int>> currentSchedule;
+  double bestSolution;                    // Melhor solução
+  double earlinessCost;                   // Custo de earliness
+  double tardinessCost;                   // Custo de tardiness
+  vector<pair<int, int>> currentSchedule; // Para combinar (BRKGA + Giffler)
 };
 
 class JIT
 {
 public:
-  // number of jobs in the instance
+  // Número de jobs da instância
   int nJobs;
-  // number of machines in the instance
+  // Número de máquinas da instância
   int nMachines;
-  // number of operations
+  // Número de operações
   int nOperations;
-  // processingTime[i] = processing time of operation i
+  // processingTime[i] = tempo de processamento da op i
   vector<int> processingTime;
-  // dueDate[i] = due date of operation i
+  // dueDate[i] = data de entrega da op i
   vector<int> dueDate;
-  // earliness[i] = earliness penalty of operation i
+  // earliness[i] = earliness da operação i
   vector<double> earliness;
-  // tardiness[i] = tardiness penalty of operation i
+  // tardiness[i] = tardiness da operação i
   vector<double> tardiness;
-  // job[i] = job of operation i (job index starts from 0)
+  // job[i] = operação i do job (indice do job começa de 0)
   vector<int> job;
-  // machine[i] = machine of op i (machine index starts from 0)
+  // machine[i] = maquina da op i (indice de maquina começa de 0)
   vector<int> machine;
-  // jobOps[i] = operations of job i
+  // jobOps[i] = operações do job i
   vector<vector<int>> jobOps;
-  // machineOps[i] = operations of machine i
+  // machineOps[i] = operações da máquina i
   vector<vector<int>> machineOps;
-  // processingOrder[i] = processing order of job i
+  // processingOrder[i] = ordem de processamento da máquina i
   vector<vector<int>> processingOrder;
 
   vector<double> readLine(string line);
@@ -68,7 +67,6 @@ SolutionData brkga(JIT &j, int N, int generations, int choice);
 SolutionData gifferThompson(JIT &j);
 vector<vector<int>> GeneratePopulation(JIT &j, int N);
 vector<pair<vector<int>, vector<double>>> GifflerFitness(JIT &j, vector<vector<int>> population, SolutionData s);
-vector<pair<vector<int>, vector<double>>> Fitness(JIT &j, vector<vector<int>> population, SolutionData s);
 vector<pair<vector<int>, vector<double>>> Fitness_v1(JIT &j, vector<vector<int>> population);
 vector<pair<vector<int>, vector<double>>> Fitness_v2(JIT &j, vector<vector<int>> population);
 vector<pair<vector<int>, vector<double>>> Fitness_v3(JIT &j, vector<vector<int>> population);

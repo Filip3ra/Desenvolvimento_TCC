@@ -5,7 +5,7 @@ using namespace std;
 /*  Converte cada linha contendo valores em um double,
     adiciona em numbers. Cada linha do arquivo representa
     um job e suas operações, onde cada uma tem 5 valores:
-    máquina, tempo processamento, data entrega, antecipaçã e atraso.
+    máquina, tempo processamento, data entrega, antecipação e atraso.
     Lê uma linha por chamada.
 */
 vector<double> JIT::readLine(string line)
@@ -27,8 +27,6 @@ vector<double> JIT::readLine(string line)
   numbers.pop_back();
   return numbers;
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////
 
 /* parseInstance() irá organizar os dados da entrada num objeto "j" que acessa diversos
 vetores e matrizes diferentes. Um vetor só para os tempos de processamento, outro só para
@@ -101,8 +99,7 @@ void JIT::parseInstance(string path)
   file.close();
 }
 
-///////////////////////////////////////////////////////////////
-
+// Para testes
 void JIT::printInstance()
 {
   cout << "n jobs:" << nJobs << ",nMachines:" << nMachines << endl;
