@@ -340,3 +340,90 @@ vector<pair<vector<int>, vector<double>>> Fitness_v3(JIT &j, vector<vector<int>>
 
   return currentPopulation;
 }
+
+/* (Fazendo) Fitness versão 3 recebendo um indivíduo do Giffler Thompsom */
+vector<pair<vector<int>, vector<double>>> GifflerWithV3(JIT &j, vector<vector<int>> population)
+{
+  /* TODO
+  - Organizar nome das funções que recebem a instância do giffler, está confuso
+  - Adaptar os demais locais onde a função é chamada:
+      - OrganizeElite()
+      - Crossover()
+      - brkga()
+  - Receber um parâmetro e imprimir pra ver se está correto
+  - Teste com instâncias rápidas
+  */
+
+  vector<pair<vector<int>, vector<double>>> currentPopulation;
+  /*
+    for (const auto &jobsVet : population)
+    {
+      // Vetores para rastrear o tempo de término por máquina e por job
+      vector<int> machineFinishTime(j.nMachines, 0);
+      vector<int> jobFinishTime(j.nJobs, 0);
+
+      double totalCost = 0.0;
+      double totalEarlinessCost = 0.0;
+      double totalTardinessCost = 0.0;
+
+      for (int i = 0; i < jobsVet.size(); i++)
+      {
+        int currentJob = jobsVet[i] - 1;
+        int opIndex = 0;
+
+        // Determinar índice da operação atual do job
+        if (jobFinishTime[currentJob] == 0)
+        {
+          opIndex = 0;
+        }
+        else
+        {
+          opIndex = 1;
+        }
+
+        int op = j.processingOrder[currentJob][opIndex];
+        int machine = j.machine[op];
+        int procTime = j.processingTime[op];
+        int dueDate = j.dueDate[op];
+        double alpha = j.earliness[op];
+        double beta = j.tardiness[op];
+
+        // Determinar o menor tempo de início possível
+        int earliestStart = max(machineFinishTime[machine], jobFinishTime[currentJob]);
+
+        // Ajustar o início para minimizar atrasos
+        int startTime = earliestStart;
+        int completionTime = startTime + procTime;
+
+        // Tentar reduzir o atraso ajustando o início
+        if (completionTime > dueDate)
+        {
+          // Se houver atraso, tente mover o início para frente, respeitando os limites
+          int maxShift = completionTime - dueDate;
+          startTime -= maxShift;
+          startTime = max(startTime, earliestStart); // Garantir que o início não seja antes do permitido
+          completionTime = startTime + procTime;
+        }
+
+        // Atualizar os tempos de término
+        machineFinishTime[machine] = completionTime;
+        jobFinishTime[currentJob] = completionTime;
+
+        // Calcular penalidades
+        int earliness = max(dueDate - completionTime, 0);
+        int tardiness = max(completionTime - dueDate, 0);
+
+        double earlinessCost = alpha * earliness;
+        double tardinessCost = beta * tardiness;
+
+        totalCost += earlinessCost + tardinessCost;
+        totalEarlinessCost += earlinessCost;
+        totalTardinessCost += tardinessCost;
+      }
+
+      // Adicionar o resultado para a sequência atual
+      currentPopulation.emplace_back(jobsVet, vector<double>{totalCost, totalEarlinessCost, totalTardinessCost});
+    }
+  */
+  return currentPopulation;
+}
