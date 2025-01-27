@@ -34,9 +34,9 @@ int main(int argc, char **argv)
     int generations = 514; // Número de gerações
   */
 
-  int executions = 1;   // Número de execuções
-  int individuals = 10; // Quantidade de indivíduos
-  int generations = 10; // Número de gerações
+  int executions = 3;    // Número de execuções
+  int individuals = 481; // Quantidade de indivíduos
+  int generations = 514; // Número de gerações
 
   cout << "Escolha o algoritmo:\n";
   cout << "1 - BRKGA V1\n";
@@ -89,6 +89,7 @@ int main(int argc, char **argv)
             bestSol = currentSol.bestSolution;
             earliness = currentSol.earlinessCost;
             tardiness = currentSol.tardinessCost;
+            cout << bestSol << " " << earliness << " " << tardiness << endl;
           }
         }
       }
