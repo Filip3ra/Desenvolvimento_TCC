@@ -45,7 +45,7 @@ SolutionData brkga(JIT &j, int N, int generations, int choice)
     population = GeneratePopulation(j, N);
     SolutionData s = gifferThompson(j); // Indivíduo gerado pelo giffler
     vector<pair<vector<int>, vector<double>>> currentPopulation = GifflerWithV3(j, population, s);
-    // organizeElite(aux, currentPopulation, generations, result, choice);
+    organizeElite(aux, currentPopulation, generations, result, choice);
   }
 
   return result;
@@ -137,7 +137,7 @@ void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopu
     {
       mutants = Fitness_v1(j, GeneratePopulation(j, eliteSize));
     }
-    else if (choice == 3)
+    else if (choice == 3 || choice == 6)
     {
       mutants = Fitness_v3(j, GeneratePopulation(j, eliteSize));
     }
@@ -284,7 +284,7 @@ vector<pair<vector<int>, vector<double>>> Crossover(
       auto childFitness = Fitness_v1(j, {child})[0].second;
       newPopulation.emplace_back(child, childFitness);
     }
-    else if (choice == 3)
+    else if (choice == 3 || choice == 6)
     {
       auto childFitness = Fitness_v3(j, {child})[0].second;
       newPopulation.emplace_back(child, childFitness);
