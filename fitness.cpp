@@ -21,6 +21,9 @@ vector<pair<vector<int>, vector<double>>> Fitness_v1(JIT &j, vector<vector<int>>
   {
     // Controle de operações processadas e tempos de término
     vector<bool> lastCompletionTime(j.nJobs, false); // Tempo de término da última operação de cada job
+    // Vetor para rastrear o índice da próxima operação de cada job
+    vector<int> nextOperationIndex(j.nJobs, 0);
+
     double totalCost = 0.0;
     double totalEarlinessCost = 0.0;
     double totalTardinessCost = 0.0;
@@ -29,17 +32,29 @@ vector<pair<vector<int>, vector<double>>> Fitness_v1(JIT &j, vector<vector<int>>
     for (int i = 0; i < jobsVet.size(); i++)
     {
       int currentJob = jobsVet[i] - 1; // Índice do job no vetor de dados
-      int opIndex = 0;                 // Índice da operação atual para o job
 
-      // Controle pra saber se já processei a primeira operação ou não
-      if (lastCompletionTime[currentJob] == false)
+      /*
+            // Controle pra saber se já processei a primeira operação ou não
+            if (lastCompletionTime[currentJob] == false)
+            {
+              opIndex = 0;
+              lastCompletionTime[currentJob] = true;
+            }
+            else
+            {
+              opIndex = 1;
+            }*/
+
+      int opIndex = nextOperationIndex[currentJob];
+      if (opIndex < j.processingOrder[currentJob].size())
       {
-        opIndex = 0;
-        lastCompletionTime[currentJob] = true;
+        // Processa a operação
+        nextOperationIndex[currentJob]++;
       }
       else
       {
-        opIndex = 1;
+        // Todas as operações deste job já foram processadas
+        continue;
       }
 
       // Obter a posição da operação atual do job nos vetores de dados
@@ -87,6 +102,7 @@ vector<pair<vector<int>, vector<double>>> Fitness_v2(JIT &j, vector<vector<int>>
     // Vetores para rastrear o tempo de término por máquina e por job
     vector<int> machineFinishTime(j.nMachines, 0);
     vector<int> jobFinishTime(j.nJobs, 0);
+    vector<int> nextOperationIndex(j.nJobs, 0);
 
     double totalCost = 0.0;
     double totalEarlinessCost = 0.0;
@@ -95,16 +111,16 @@ vector<pair<vector<int>, vector<double>>> Fitness_v2(JIT &j, vector<vector<int>>
     for (int i = 0; i < jobsVet.size(); i++)
     {
       int currentJob = jobsVet[i] - 1;
-      int opIndex = 0;
-
-      // Determinar índice da operação atual do job
-      if (jobFinishTime[currentJob] == 0)
+      int opIndex = nextOperationIndex[currentJob];
+      if (opIndex < j.processingOrder[currentJob].size())
       {
-        opIndex = 0;
+        // Processa a operação
+        nextOperationIndex[currentJob]++;
       }
       else
       {
-        opIndex = 1; // Supondo no máximo 2 operações por job
+        // Todas as operações deste job já foram processadas
+        continue;
       }
 
       int op = j.processingOrder[currentJob][opIndex];
@@ -178,6 +194,7 @@ vector<pair<vector<int>, vector<double>>> GifflerFitness(JIT &j, vector<vector<i
     // Vetores para rastrear o tempo de término por máquina e por job
     vector<int> machineFinishTime(j.nMachines, 0);
     vector<int> jobFinishTime(j.nJobs, 0);
+    vector<int> nextOperationIndex(j.nJobs, 0);
 
     double totalCost = 0.0;
     double totalEarlinessCost = 0.0;
@@ -186,15 +203,14 @@ vector<pair<vector<int>, vector<double>>> GifflerFitness(JIT &j, vector<vector<i
     for (int i = 0; i < jobsVet.size(); i++)
     {
       int currentJob = jobsVet[i] - 1;
-      int opIndex = 0;
-
-      if (jobFinishTime[currentJob] == 0)
+      int opIndex = nextOperationIndex[currentJob];
+      if (opIndex < j.processingOrder[currentJob].size())
       {
-        opIndex = 0;
+        nextOperationIndex[currentJob]++;
       }
       else
       {
-        opIndex = 1;
+        continue;
       }
 
       int op;
