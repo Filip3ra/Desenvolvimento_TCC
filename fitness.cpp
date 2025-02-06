@@ -32,19 +32,6 @@ vector<pair<vector<int>, vector<double>>> Fitness_v1(JIT &j, vector<vector<int>>
     for (int i = 0; i < jobsVet.size(); i++)
     {
       int currentJob = jobsVet[i] - 1; // Índice do job no vetor de dados
-
-      /*
-            // Controle pra saber se já processei a primeira operação ou não
-            if (lastCompletionTime[currentJob] == false)
-            {
-              opIndex = 0;
-              lastCompletionTime[currentJob] = true;
-            }
-            else
-            {
-              opIndex = 1;
-            }*/
-
       int opIndex = nextOperationIndex[currentJob];
       if (opIndex < j.processingOrder[currentJob].size())
       {
@@ -302,15 +289,13 @@ vector<pair<vector<int>, vector<double>>> Fitness_v3(JIT &j, vector<vector<int>>
     {
       int currentJob = jobsVet[i] - 1;
       int opIndex = nextOperationIndex[currentJob];
-
-      // Determinar índice da operação atual do job
-      if (jobFinishTime[currentJob] == 0)
+      if (opIndex < j.processingOrder[currentJob].size())
       {
-        opIndex = 0;
+        nextOperationIndex[currentJob]++;
       }
       else
       {
-        opIndex = 1; // Supondo no máximo 2 operações por job
+        continue;
       }
 
       int op = j.processingOrder[currentJob][opIndex];
@@ -425,6 +410,7 @@ vector<pair<vector<int>, vector<double>>> GifflerWithV3(JIT &j, vector<vector<in
     // Vetores para rastrear o tempo de término por máquina e por job
     vector<int> machineFinishTime(j.nMachines, 0);
     vector<int> jobFinishTime(j.nJobs, 0);
+    vector<int> nextOperationIndex(j.nJobs, 0);
 
     double totalCost = 0.0;
     double totalEarlinessCost = 0.0;
@@ -433,18 +419,15 @@ vector<pair<vector<int>, vector<double>>> GifflerWithV3(JIT &j, vector<vector<in
     for (int i = 0; i < jobsVet.size(); i++)
     {
       int currentJob = jobsVet[i] - 1;
-      int opIndex = 0;
-
-      // Determinar índice da operação atual do job
-      if (jobFinishTime[currentJob] == 0)
+      int opIndex = nextOperationIndex[currentJob];
+      if (opIndex < j.processingOrder[currentJob].size())
       {
-        opIndex = 0;
+        nextOperationIndex[currentJob]++;
       }
       else
       {
-        opIndex = 1;
+        continue;
       }
-
       int op;
       int machine;
       int procTime;
