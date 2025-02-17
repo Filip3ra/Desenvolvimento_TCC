@@ -16,7 +16,7 @@ int main(int argc, char **argv)
   string outputFile(argv[1]);
 
   /* para testes rápidos*/
-  vector<string> folders = {"loose-equal", "loose-tard", "tight-equal", "tight-tard"};
+  vector<string> folders = {"loose-equal"};
   vector<string> files = {"test1_10x2.txt", "test1_15x5.txt", "test1_20x10.txt"};
 
   /*
