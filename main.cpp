@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 
   /* para testes rápidos*/
   vector<string> folders = {"loose-equal"};
-  vector<string> files = {"test1_10x2.txt", "test1_15x5.txt", "test1_20x10.txt"};
+  vector<string> files = {"test1_10x2.txt"};
 
   /*
     vector<string> folders = {"loose-equal", "loose-tard", "tight-equal", "tight-tard"};
@@ -34,9 +34,9 @@ int main(int argc, char **argv)
     int generations = 514; // Número de gerações
   */
 
-  int executions = 3;    // Número de execuções
-  int individuals = 481; // Quantidade de indivíduos
-  int generations = 514; // Número de gerações
+  int executions = 1;   // Número de execuções
+  int individuals = 10; // Quantidade de indivíduos
+  int generations = 2;  // Número de gerações
 
   cout << "Escolha o algoritmo:\n";
   cout << "1 - BRKGA V1\n";

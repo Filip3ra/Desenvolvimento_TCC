@@ -151,6 +151,7 @@ vector<pair<vector<int>, vector<double>>> Fitness_v2(JIT &j, vector<vector<int>>
     // Adicionar o resultado para a sequência atual
     currentPopulation.emplace_back(jobsVet, vector<double>{totalCost, totalEarlinessCost, totalTardinessCost});
   }
+
   return currentPopulation;
 }
 
