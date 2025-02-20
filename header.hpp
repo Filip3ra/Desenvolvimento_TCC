@@ -66,11 +66,11 @@ public:
 SolutionData brkga(JIT &j, int N, int generations, int choice);
 SolutionData gifferThompson(JIT &j);
 vector<vector<int>> GeneratePopulation(JIT &j, int N);
-vector<pair<vector<int>, vector<double>>> GifflerFitness(JIT &j, vector<vector<int>> population, SolutionData s);
+vector<pair<vector<int>, vector<double>>> Fitness_v2_Giffler(JIT &j, vector<vector<int>> population, SolutionData s);
 vector<pair<vector<int>, vector<double>>> Fitness_v1(JIT &j, vector<vector<int>> population);
 vector<pair<vector<int>, vector<double>>> Fitness_v2(JIT &j, vector<vector<int>> population);
 vector<pair<vector<int>, vector<double>>> Fitness_v3(JIT &j, vector<vector<int>> population);
-vector<pair<vector<int>, vector<double>>> GifflerWithV3(JIT &j, vector<vector<int>> population, SolutionData s);
+vector<pair<vector<int>, vector<double>>> Fitness_v3_Giffler(JIT &j, vector<vector<int>> population, SolutionData s);
 
 void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopulation, int geracoes, SolutionData &bestSolution, int choice);
 vector<pair<vector<int>, vector<double>>> Crossover(

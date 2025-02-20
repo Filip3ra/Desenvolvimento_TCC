@@ -37,14 +37,14 @@ SolutionData brkga(JIT &j, int N, int generations, int choice)
   {
     population = GeneratePopulation(j, N);
     SolutionData s = gifferThompson(j); // Indivíduo gerado pelo giffler
-    vector<pair<vector<int>, vector<double>>> currentPopulation = GifflerFitness(j, population, s);
+    vector<pair<vector<int>, vector<double>>> currentPopulation = Fitness_v2_Giffler(j, population, s);
     organizeElite(aux, currentPopulation, generations, result, choice);
   }
   else if (choice == 6) // V3 + Giffler
   {
     population = GeneratePopulation(j, N);
     SolutionData s = gifferThompson(j); // Indivíduo gerado pelo giffler
-    vector<pair<vector<int>, vector<double>>> currentPopulation = GifflerWithV3(j, population, s);
+    vector<pair<vector<int>, vector<double>>> currentPopulation = Fitness_v3_Giffler(j, population, s);
     organizeElite(aux, currentPopulation, generations, result, choice);
   }
 
@@ -311,6 +311,7 @@ vector<pair<vector<int>, vector<double>>> Crossover(
   return newPopulation;
 }
 
+/*
 // Para testes
 void printCurrentPopulation(const vector<pair<vector<int>, vector<double>>> &currentPopulation)
 {
@@ -343,3 +344,4 @@ void printCurrentPopulation(const vector<pair<vector<int>, vector<double>>> &cur
     cout << "]" << endl;
   }
 }
+*/

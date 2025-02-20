@@ -156,7 +156,7 @@ vector<pair<vector<int>, vector<double>>> Fitness_v2(JIT &j, vector<vector<int>>
 }
 
 /* Fitness Versão 2 recebendo um indivíduo do giffler thompsom */
-vector<pair<vector<int>, vector<double>>> GifflerFitness(JIT &j, vector<vector<int>> population, SolutionData s = {})
+vector<pair<vector<int>, vector<double>>> Fitness_v2_Giffler(JIT &j, vector<vector<int>> population, SolutionData s = {})
 {
   // cout << "entrei Fit" << endl;
   vector<pair<vector<int>, vector<double>>> currentPopulation;
@@ -347,7 +347,7 @@ vector<pair<vector<int>, vector<double>>> Fitness_v3(JIT &j, vector<vector<int>>
 }
 
 /* (Fazendo) Fitness versão 3 recebendo um indivíduo do Giffler Thompsom */
-vector<pair<vector<int>, vector<double>>> GifflerWithV3(JIT &j, vector<vector<int>> population, SolutionData s = {})
+vector<pair<vector<int>, vector<double>>> Fitness_v3_Giffler(JIT &j, vector<vector<int>> population, SolutionData s = {})
 {
   /* TODO
   - Organizar nome das funções que recebem a instância do giffler, está confuso []
