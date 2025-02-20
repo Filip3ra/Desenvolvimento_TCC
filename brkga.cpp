@@ -103,18 +103,6 @@ vector<vector<int>> GeneratePopulation(JIT &j, int N)
     population.push_back(jobsVet);
   }
 
-  // Imprimir population
-  cout << "Population (N=" << N << "):" << endl;
-  for (int i = 0; i < N; i++)
-  {
-    cout << "Variacao " << i + 1 << ": [ ";
-    for (int j = 0; j < sizeVet; j++)
-    {
-      cout << population[i][j] << " ";
-    }
-    cout << "]" << endl;
-  }
-
   return population;
 }
 
