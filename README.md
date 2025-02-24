@@ -7,7 +7,7 @@ Este repositório está disponível publicamente para fins de consulta e aprendi
 
 Caso tenha interesse em contribuir ou obter permissão para uso, entre em contato.  
 
-# 📌 BRKGA E GIFFLER THOMPSON APLICADOS AO JUST-IN-TIME JOB SHOP 
+## 📌 BRKGA E GIFFLER THOMPSON APLICADOS AO JUST-IN-TIME JOB SHOP 
 
 Esse projeto desenvolve o algoritmo BRKGA (Baised Random Key Genetic Algorithm) e o Giffler Thompson para resolução de problemas de Job Shop Scheduling Just-In-Time. 
 
