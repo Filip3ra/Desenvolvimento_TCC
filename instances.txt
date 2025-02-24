@@ -1,2 +1,0 @@
-instances/loose-equal/test2_10x2.txt
-instances/loose-equal/test1_10x2.txt
