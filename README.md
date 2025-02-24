@@ -35,7 +35,7 @@ podem ser identificadas no início do código, onde uma delas vai estar comentad
 
 # Execute o projeto no prompt
 exemplo powershell:
-Compilar: g++ -o prog.exe main.cpp code.cpp giffer.cpp brkga.cpp fitness.cpp
-Executar: /prog.exe instances/result.txt
-Selecione uma das opções disponível no menu, referente a qual algoritmo deseja executar.
-Os resultados serão processados no arquivo result.txt na pasta da instâncias.
+- Compilar: g++ -o prog.exe main.cpp code.cpp giffer.cpp brkga.cpp fitness.cpp
+- Executar: /prog.exe instances/result.txt
+- Selecione uma das opções disponível no menu, referente a qual algoritmo deseja executar.
+- Os resultados serão processados no arquivo result.txt na pasta da instâncias.
