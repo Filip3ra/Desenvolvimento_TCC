@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 */
 
   /* Configuração do iRace:
-    int executions = 3;    // Número de execuções
+      int executions = 3;    // Número de execuções
       int individuals = 481; // Quantidade de indivíduos
       int generations = 514; // Número de gerações
     */
