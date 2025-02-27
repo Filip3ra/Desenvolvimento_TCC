@@ -80,5 +80,9 @@ vector<pair<vector<int>, vector<double>>> Crossover(
     vector<pair<vector<int>, vector<double>>> remaining,
     int choice);
 
+double calculateCost(JIT &j, const vector<int> &schedule);
+void localSearch(JIT &j, vector<int> &bestSchedule, double &bestCost);
+SolutionData applyLocalSearch(JIT &j, SolutionData _bestSolution);
+
 void printCurrentPopulation(const vector<pair<vector<int>, vector<double>>> &currentPopulation);
 void printCandidates(const vector<tuple<int, int, int>> &candidates);

@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 
   /* Para testes rápidos */
   vector<string> folders = {"loose-equal"};
-  vector<string> files = {"test1_10x2.txt", "test2_10x2.txt", "test1_10x5.txt"};
+  vector<string> files = {"test1_10x2.txt"};
 
   /* Para execução completa.
   vector<string> folders = {"loose-equal", "loose-tard", "tight-equal", "tight-tard"};
@@ -35,9 +35,9 @@ int main(int argc, char **argv)
       int generations = 514; // Número de gerações
     */
 
-  int executions = 3;    // Número de execuções
-  int individuals = 481; // Quantidade de indivíduos
-  int generations = 514; // Número de gerações
+  int executions = 1;   // Número de execuções
+  int individuals = 10; // Quantidade de indivíduos
+  int generations = 1;  // Número de gerações
 
   cout << "Escolha o algoritmo:\n";
   cout << "1 - BRKGA V1\n";
@@ -76,6 +76,7 @@ int main(int argc, char **argv)
       double tardiness = 0.0;
 
       SolutionData currentSol;
+      // SolutionData newSol;
 
       j.parseInstance(filePath);
 
@@ -85,6 +86,12 @@ int main(int argc, char **argv)
         for (size_t i = 0; i < executions; i++)
         {
           currentSol = brkga(j, individuals, generations, choice);
+
+          if (choice == 6)
+          {
+            currentSol = applyLocalSearch(j, currentSol); // Aplico busca local na melhor solução encontrada
+          }
+
           if (currentSol.bestSolution < bestSol)
           {
             bestSol = currentSol.bestSolution;

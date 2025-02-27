@@ -167,6 +167,8 @@ void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopu
     result.earlinessCost = currentPopulation[0].second[1];
     result.tardinessCost = currentPopulation[0].second[2];
   }
+  ////////////////////////////////////////
+  printCurrentPopulation(currentPopulation);
 }
 
 vector<pair<vector<int>, vector<double>>> Crossover(
@@ -299,7 +301,7 @@ vector<pair<vector<int>, vector<double>>> Crossover(
   return newPopulation;
 }
 
-/*
+/**/
 // Para testes
 void printCurrentPopulation(const vector<pair<vector<int>, vector<double>>> &currentPopulation)
 {
@@ -332,4 +334,4 @@ void printCurrentPopulation(const vector<pair<vector<int>, vector<double>>> &cur
     cout << "]" << endl;
   }
 }
-*/
+/**/
