@@ -25,7 +25,7 @@ vector<int> localSearch(JIT &j, vector<int> bestSequence)
       swap(improvedSequence[i], improvedSequence[k]);
 
       auto newFitness = Fitness_v3(j, {improvedSequence});
-      if (!newFitness.empty() && newFitness[0].second[0] < bestCost)
+      if (!newFitness.empty() && newFitness[0].second[0] < bestCost) // A troca gerou solução melhor?
       {
         bestCost = newFitness[0].second[0];
         bestSequence = improvedSequence;
@@ -37,7 +37,7 @@ vector<int> localSearch(JIT &j, vector<int> bestSequence)
     }
   }
 
-  // cout << "second print" << endl;
+  // cout << "best sequence yet:" << endl;
   // printSequence(improvedSequence);
 
   return bestSequence;
