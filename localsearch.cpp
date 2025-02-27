@@ -1,54 +1,55 @@
 #include "header.hpp"
-#include <algorithm>
-#include <vector>
-#include <limits>
 
 using namespace std;
 
-// Função para calcular o custo de uma solução
-double calculateCost(JIT &j, const vector<int> &schedule)
+vector<int> localSearch(JIT &j, vector<int> bestSequence)
 {
-  double x = 5;
+  vector<int> improvedSequence = bestSequence;
+  double bestCost = numeric_limits<double>::max();
 
-  return x;
-}
+  // cout << "first print" << endl;
+  // printSequence(improvedSequence);
 
-// Função de busca local baseada em trocas swap
-void localSearch(JIT &j, vector<int> &bestSchedule, double &bestCost)
-{
-}
-
-// Aplicando busca local
-SolutionData applyLocalSearch(JIT &j, SolutionData _bestSolution)
-{
-  // Extrai o melhor agendamento do brkga
-  vector<int> bestSchedule;
-  for (const auto &pair : _bestSolution.currentSchedule)
+  // Avalia a sequência inicial
+  auto initialFitness = Fitness_v3(j, {bestSequence});
+  if (!initialFitness.empty())
   {
-    bestSchedule.push_back(pair.first);
+    bestCost = initialFitness[0].second[0];
   }
+
+  // Aplica busca local trocando pares de operações
+  for (size_t i = 0; i < bestSequence.size() - 1; ++i)
+  {
+    for (size_t k = i + 1; k < bestSequence.size(); ++k)
+    {
+      swap(improvedSequence[i], improvedSequence[k]);
+
+      auto newFitness = Fitness_v3(j, {improvedSequence});
+      if (!newFitness.empty() && newFitness[0].second[0] < bestCost)
+      {
+        bestCost = newFitness[0].second[0];
+        bestSequence = improvedSequence;
+      }
+      else
+      {
+        swap(improvedSequence[i], improvedSequence[k]); // Reverte se não melhorar
+      }
+    }
+  }
+
+  // cout << "second print" << endl;
+  // printSequence(improvedSequence);
+
+  return bestSequence;
+}
+
+void printSequence(vector<int> v)
+{
 
   cout << "[ ";
-  for (size_t i = 0; i < bestSchedule.size(); i++)
+  for (size_t i = 0; i < v.size(); i++)
   {
-    cout << bestSchedule[i] << " ";
+    cout << v[i] << " ";
   }
   cout << "] " << endl;
-
-  /*
-    // Calcula o custo inicial da melhor solução
-    double bestCost = _bestSolution.bestSolution; // Muda nome depois
-
-    // Aplica busca local
-    localSearch(j, bestSchedule, bestCost);
-
-    // Atualiza melhor solução com resultado da busca local
-    _bestSolution.bestSolution = bestCost;
-    _bestSolution.currentSchedule.clear();
-    for (size_t i = 0; i < bestSchedule.size(); ++i)
-    {
-      _bestSolution.currentSchedule.emplace_back(bestSchedule[i], i);
-    }
-  */
-  return _bestSolution;
 }

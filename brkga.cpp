@@ -163,12 +163,33 @@ void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopu
   // Atualizar melhor solução encontrada
   if (currentPopulation[0].second[0] < result.bestSolution)
   {
+    // Aplicar busca local na melhor sequência antes de atualizar o resultado
+    vector<int> improvedSequence = localSearch(j, currentPopulation[0].first);
+
+    // Avaliar o custo da sequência melhorada
+    auto improvedFitness = Fitness_v3(j, {improvedSequence});
+    if (!improvedFitness.empty() && improvedFitness[0].second[0] < currentPopulation[0].second[0])
+    {
+      currentPopulation[0].first = improvedSequence;
+      currentPopulation[0].second = improvedFitness[0].second;
+    }
+
+    // Atualizar resultado com a sequência (melhorada ou original)
     result.bestSolution = currentPopulation[0].second[0];
     result.earlinessCost = currentPopulation[0].second[1];
     result.tardinessCost = currentPopulation[0].second[2];
   }
-  ////////////////////////////////////////
-  printCurrentPopulation(currentPopulation);
+
+  /*
+  // Atualizar melhor solução encontrada
+  if (currentPopulation[0].second[0] < result.bestSolution)
+  {
+    result.bestSolution = currentPopulation[0].second[0];
+    result.earlinessCost = currentPopulation[0].second[1];
+    result.tardinessCost = currentPopulation[0].second[2];
+  }
+*/
+  // printCurrentPopulation(currentPopulation);
 }
 
 vector<pair<vector<int>, vector<double>>> Crossover(
