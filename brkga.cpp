@@ -12,35 +12,35 @@
 
 using namespace std;
 
-SolutionData brkga(JIT &j, int N, int generations, int choice)
+SolutionData brkga(JIT &j, int N, int generations, pair<int, int> choice)
 {
   SolutionData result = {numeric_limits<double>::max(), 0.0, 0.0}; // Inicializa com valores padrão
   JIT aux = j;
   vector<vector<int>> population;
 
-  if (choice == 1) // V1
+  if (choice.first == 1) // V1
   {
     population = GeneratePopulation(j, N);
     organizeElite(aux, Fitness_v1(j, GeneratePopulation(j, N)), generations, result, choice);
   }
-  else if (choice == 2) // V2
+  else if (choice.first == 2) // V2
   {
     population = GeneratePopulation(j, N);
     organizeElite(aux, Fitness_v2(j, GeneratePopulation(j, N)), generations, result, choice);
   }
-  else if (choice == 3) // V3
+  else if (choice.first == 3) // V3
   {
     population = GeneratePopulation(j, N);
     organizeElite(aux, Fitness_v3(j, GeneratePopulation(j, N)), generations, result, choice);
   }
-  else if (choice == 4) // V2 + Giffler
+  else if (choice.first == 4) // V2 + Giffler
   {
     population = GeneratePopulation(j, N);
     SolutionData s = gifferThompson(j); // Indivíduo gerado pelo giffler
     vector<pair<vector<int>, vector<double>>> currentPopulation = Fitness_v2_Giffler(j, population, s);
     organizeElite(aux, currentPopulation, generations, result, choice);
   }
-  else if (choice == 6) // V3 + Giffler
+  else if (choice.first == 6) // V3 + Giffler
   {
     population = GeneratePopulation(j, N);
     SolutionData s = gifferThompson(j); // Indivíduo gerado pelo giffler
@@ -107,7 +107,7 @@ vector<vector<int>> GeneratePopulation(JIT &j, int N)
 }
 
 // Organiza em Elite, Não-Elite, Mutantes, depois chama Crossover
-void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopulation, int generations, SolutionData &result, int choice)
+void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopulation, int generations, SolutionData &result, pair<int, int> choice)
 {
   // Ordenar currentPopulation pelo custo (menor custo primeiro)
   sort(currentPopulation.begin(), currentPopulation.end(),
@@ -134,15 +134,15 @@ void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopu
 
     // Gerar novos indivíduos
     vector<pair<vector<int>, vector<double>>> mutants;
-    if (choice == 1)
+    if (choice.first == 1)
     {
       mutants = Fitness_v1(j, GeneratePopulation(j, eliteSize));
     }
-    else if (choice == 3 || choice == 6)
+    else if (choice.first == 3 || choice.first == 6)
     {
       mutants = Fitness_v3(j, GeneratePopulation(j, eliteSize));
     }
-    else if (choice == 2 || choice == 4)
+    else if (choice.first == 2 || choice.first == 4)
     {
       mutants = Fitness_v2(j, GeneratePopulation(j, eliteSize));
     }
@@ -163,15 +163,18 @@ void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopu
   // Atualizar melhor solução encontrada
   if (currentPopulation[0].second[0] < result.bestSolution)
   {
-    // Aplicar busca local na melhor sequência antes de atualizar o resultado
-    vector<int> improvedSequence = localSearch(j, currentPopulation[0].first);
-
-    // Avaliar o custo da sequência melhorada
-    auto improvedFitness = Fitness_v3(j, {improvedSequence});
-    if (!improvedFitness.empty() && improvedFitness[0].second[0] < currentPopulation[0].second[0])
+    if (choice.second == 1)
     {
-      currentPopulation[0].first = improvedSequence;
-      currentPopulation[0].second = improvedFitness[0].second;
+      // Aplicar busca local na melhor sequência antes de atualizar o resultado
+      vector<int> improvedSequence = localSearch(j, currentPopulation[0].first);
+
+      // Avaliar o custo da sequência melhorada
+      auto improvedFitness = Fitness_v3(j, {improvedSequence});
+      if (!improvedFitness.empty() && improvedFitness[0].second[0] < currentPopulation[0].second[0])
+      {
+        currentPopulation[0].first = improvedSequence;
+        currentPopulation[0].second = improvedFitness[0].second;
+      }
     }
 
     // Atualizar resultado com a sequência (melhorada ou original)
@@ -196,7 +199,7 @@ vector<pair<vector<int>, vector<double>>> Crossover(
     JIT &j,
     vector<pair<vector<int>, vector<double>>> elite,
     vector<pair<vector<int>, vector<double>>> mutants,
-    vector<pair<vector<int>, vector<double>>> remaining, int choice)
+    vector<pair<vector<int>, vector<double>>> remaining, pair<int, int> choice)
 {
 
   // Combinar mutants e remaining
@@ -303,18 +306,30 @@ vector<pair<vector<int>, vector<double>>> Crossover(
     }
 
     //  Calcular o fitness do filho
-    if (choice == 1)
+    if (choice.first == 1)
     {
+      if (choice.second == 1) // Se solicitado, faz busca local
+      {
+        child = localSearch(j, child);
+      }
       auto childFitness = Fitness_v1(j, {child})[0].second;
       newPopulation.emplace_back(child, childFitness);
     }
-    else if (choice == 3 || choice == 6)
+    else if (choice.first == 3 || choice.first == 6)
     {
+      if (choice.second == 1)
+      {
+        child = localSearch(j, child);
+      }
       auto childFitness = Fitness_v3(j, {child})[0].second;
       newPopulation.emplace_back(child, childFitness);
     }
-    else if (choice == 2 || choice == 4)
+    else if (choice.first == 2 || choice.first == 4)
     {
+      if (choice.second == 1)
+      {
+        child = localSearch(j, child);
+      }
       auto childFitness = Fitness_v2(j, {child})[0].second; // Obter diretamente o vetor de fitness
       newPopulation.emplace_back(child, childFitness);      // Adicionar à nova população
     }

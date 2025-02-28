@@ -17,8 +17,8 @@ int main(int argc, char **argv)
 
   /* Para testes rápidos
   vector<string> folders = {"loose-equal"};
-  vector<string> files = {"test1_10x2.txt", "test2_10x2.txt", "test1_10x5.txt", "test2_10x5.txt"};
-*/
+  vector<string> files = {"test1_10x2.txt"};*/
+
   /* Para execução completa.*/
   vector<string> folders = {"loose-equal", "loose-tard", "tight-equal", "tight-tard"};
   vector<string> files = {
@@ -34,9 +34,13 @@ int main(int argc, char **argv)
       int generations = 514; // Número de gerações
     */
 
-  int executions = 3;    // Número de execuções
+  int executions = 1;    // Número de execuções
   int individuals = 481; // Quantidade de indivíduos
   int generations = 514; // Número de gerações
+
+  pair<int, int> choice;
+  int choice_version;
+  int choice_localSearch;
 
   cout << "Escolha o algoritmo:\n";
   cout << "1 - BRKGA V1\n";
@@ -45,8 +49,16 @@ int main(int argc, char **argv)
   cout << "4 - BRKGA V2 + Giffler-Thompson\n";
   cout << "5 - Giffler-Thompson\n";
   cout << "6 - BRKGA V3 + Giffler-Thompson\n";
-  int choice;
-  cin >> choice;
+  cin >> choice_version;
+  choice.first = choice_version;
+  choice.second = 0; // Sem busca local por padrão
+
+  cout << "Deseja aplicar busca local na melhor solucao encontrada?\n1 - Sim\n2 - Nao" << endl;
+  cin >> choice_localSearch;
+  if (choice_localSearch == 1)
+  {
+    choice.second = choice_localSearch;
+  }
 
   ofstream resultFile(outputFile);
   if (!resultFile.is_open())
@@ -80,7 +92,7 @@ int main(int argc, char **argv)
       j.parseInstance(filePath);
 
       // BRKGA V1, V2, V3, (V2 + Giffler), (V3 + Giffler)
-      if (choice == 1 || choice == 2 || choice == 3 || choice == 4 || choice == 6)
+      if (choice.first == 1 || choice.first == 2 || choice.first == 3 || choice.first == 4 || choice.first == 6)
       {
         for (size_t i = 0; i < executions; i++)
         {
@@ -94,7 +106,7 @@ int main(int argc, char **argv)
           }
         }
       }
-      else if (choice == 5) // Giffler Thompson
+      else if (choice.first == 5) // Giffler Thompson
       {
         currentSol = gifferThompson(j);
         bestSol = currentSol.bestSolution;

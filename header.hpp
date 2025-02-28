@@ -63,7 +63,7 @@ public:
   void printInstance();
 };
 
-SolutionData brkga(JIT &j, int N, int generations, int choice);
+SolutionData brkga(JIT &j, int N, int generations, pair<int, int> choice);
 SolutionData gifferThompson(JIT &j);
 vector<vector<int>> GeneratePopulation(JIT &j, int N);
 vector<pair<vector<int>, vector<double>>> Fitness_v2_Giffler(JIT &j, vector<vector<int>> population, SolutionData s);
@@ -72,13 +72,13 @@ vector<pair<vector<int>, vector<double>>> Fitness_v2(JIT &j, vector<vector<int>>
 vector<pair<vector<int>, vector<double>>> Fitness_v3(JIT &j, vector<vector<int>> population);
 vector<pair<vector<int>, vector<double>>> Fitness_v3_Giffler(JIT &j, vector<vector<int>> population, SolutionData s);
 
-void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopulation, int geracoes, SolutionData &bestSolution, int choice);
+void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopulation, int geracoes, SolutionData &bestSolution, pair<int, int> choice);
 vector<pair<vector<int>, vector<double>>> Crossover(
     JIT &j,
     vector<pair<vector<int>, vector<double>>> elite,
     vector<pair<vector<int>, vector<double>>> mutants,
     vector<pair<vector<int>, vector<double>>> remaining,
-    int choice);
+    pair<int, int> choice);
 
 vector<int> localSearch(JIT &j, vector<int> bestSequence);
 
