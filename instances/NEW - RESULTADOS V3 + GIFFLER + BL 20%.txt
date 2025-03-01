@@ -1,3 +1,6 @@
+exec:1
+indivi:100
+generations:100
 loose-equal
 test1_10x2.txt 266.18 62.48 203.7 1952.14
 test2_10x2.txt 365.52 232.43 133.09 1842.44

@@ -1,3 +1,4 @@
+config normal
 loose-equal
 test1_10x2.txt 233.39 44.9 188.49 18920
 test2_10x2.txt 354.64 210.62 144.02 19279.1
