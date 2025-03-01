@@ -305,10 +305,11 @@ vector<pair<vector<int>, vector<double>>> Crossover(
       queue_.pop();
     }
 
+    double luckyNumber = dist(gen);
     //  Calcular o fitness do filho
     if (choice.first == 1)
     {
-      if (choice.second == 1) // Se solicitado, faz busca local
+      if (choice.second == 1 && luckyNumber <= 0.2) // 20% de chance de executar busca local, se for habilitada
       {
         child = localSearch(j, child);
       }
@@ -317,7 +318,7 @@ vector<pair<vector<int>, vector<double>>> Crossover(
     }
     else if (choice.first == 3 || choice.first == 6)
     {
-      if (choice.second == 1)
+      if (choice.second == 1 && luckyNumber <= 0.7)
       {
         child = localSearch(j, child);
       }
@@ -326,7 +327,7 @@ vector<pair<vector<int>, vector<double>>> Crossover(
     }
     else if (choice.first == 2 || choice.first == 4)
     {
-      if (choice.second == 1)
+      if (choice.second == 1 && luckyNumber <= 0.2)
       {
         child = localSearch(j, child);
       }
