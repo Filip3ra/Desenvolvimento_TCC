@@ -81,7 +81,3 @@ vector<pair<vector<int>, vector<double>>> Crossover(
     pair<int, int> choice);
 
 vector<int> localSearch(JIT &j, vector<int> bestSequence);
-
-void printCurrentPopulation(const vector<pair<vector<int>, vector<double>>> &currentPopulation);
-void printCandidates(const vector<tuple<int, int, int>> &candidates);
-void printSequence(vector<int> v);
