@@ -346,19 +346,9 @@ vector<pair<vector<int>, vector<double>>> Fitness_v3(JIT &j, vector<vector<int>>
   return currentPopulation;
 }
 
-/* (Fazendo) Fitness versão 3 recebendo um indivíduo do Giffler Thompsom */
+/* Fitness versão 3 recebendo um indivíduo do Giffler Thompsom */
 vector<pair<vector<int>, vector<double>>> Fitness_v3_Giffler(JIT &j, vector<vector<int>> population, SolutionData s = {})
 {
-  /* TODO
-  - Organizar nome das funções que recebem a instância do giffler, está confuso []
-  - Receber um parâmetro e imprimir pra ver se está correto [ok]
-  - Adaptar os demais locais onde a função é chamada: []
-      - OrganizeElite()
-      - Crossover()
-      - brkga()
-  - Teste com instâncias rápidas []
-  */
-
   vector<pair<vector<int>, vector<double>>> currentPopulation;
 
   vector<pair<int, int>> gSol;
@@ -370,41 +360,10 @@ vector<pair<vector<int>, vector<double>>> Fitness_v3_Giffler(JIT &j, vector<vect
     jobGiffler.push_back(p.first);
     posGiffler.push_back(p.second);
   }
-  /*
-    ///// JOB
-    cout << "jobGiffler : [ ";
-    for (int i = 0; i < jobGiffler.size(); i++)
-    {
-      cout << jobGiffler[i] << " ";
-    }
-    cout << "]\n"
-         << endl;
 
-    ///// POS JOB
-    cout << "pos : [ ";
-    for (int i = 0; i < posGiffler.size(); i++)
-    {
-      cout << posGiffler[i] << " ";
-    }
-    cout << "]\n"
-         << endl;
-  */
   population.push_back(jobGiffler); // Insiro instância do giffler thompson
   int lastPos = population.size() - 1;
-
-  int contador = 0;
-  /*
-    cout << "population[0].size(): " << population[0].size() << endl;
-    for (int i = 0; i < population.size(); i++)
-    {
-      cout << "Variacao " << i + 1 << ": [ ";
-      for (int k = 0; k < population[0].size(); k++)
-      {
-        cout << population[i][k] << " ";
-      }
-      cout << "]" << endl;
-    }
-  */
+  int counter = 0;
 
   for (const auto &jobsVet : population)
   {
@@ -438,7 +397,7 @@ vector<pair<vector<int>, vector<double>>> Fitness_v3_Giffler(JIT &j, vector<vect
 
       // Se for a instância do giffler, as sequências das operações
       // já foram definidas, então basta acessar elas
-      if (contador == lastPos)
+      if (counter == lastPos)
       {
         op = posGiffler[i];
         machine = j.machine[op];

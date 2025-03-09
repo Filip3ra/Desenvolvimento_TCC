@@ -182,17 +182,6 @@ void organizeElite(JIT &j, vector<pair<vector<int>, vector<double>>> currentPopu
     result.earlinessCost = currentPopulation[0].second[1];
     result.tardinessCost = currentPopulation[0].second[2];
   }
-
-  /*
-  // Atualizar melhor solução encontrada
-  if (currentPopulation[0].second[0] < result.bestSolution)
-  {
-    result.bestSolution = currentPopulation[0].second[0];
-    result.earlinessCost = currentPopulation[0].second[1];
-    result.tardinessCost = currentPopulation[0].second[2];
-  }
-*/
-  // printCurrentPopulation(currentPopulation);
 }
 
 vector<pair<vector<int>, vector<double>>> Crossover(
@@ -305,20 +294,20 @@ vector<pair<vector<int>, vector<double>>> Crossover(
       queue_.pop();
     }
 
-    double luckyNumber = dist(gen);
     //  Calcular o fitness do filho
+    double luckyNumber = dist(gen);
     if (choice.first == 1)
     {
-      if (choice.second == 1 && luckyNumber <= 0.2) // 20% de chance de executar busca local, se for habilitada
+      if (choice.second == 1 && luckyNumber <= 0.2)
       {
         child = localSearch(j, child);
       }
       auto childFitness = Fitness_v1(j, {child})[0].second;
       newPopulation.emplace_back(child, childFitness);
     }
-    else if (choice.first == 3 || choice.first == 6)
+    else if (choice.first == 3 || choice.first == 6) // Testes de 20% e 70% foram realizados só nessa versão
     {
-      if (choice.second == 1 && luckyNumber <= 0.7)
+      if (choice.second == 1 && luckyNumber <= 0.7) // A chance tem que mudar manualmente aqui
       {
         child = localSearch(j, child);
       }
@@ -337,38 +326,3 @@ vector<pair<vector<int>, vector<double>>> Crossover(
   }
   return newPopulation;
 }
-
-/**/
-// Para testes
-void printCurrentPopulation(const vector<pair<vector<int>, vector<double>>> &currentPopulation)
-{
-  int index = 0; // Para identificar o par atual
-  for (const auto &p : currentPopulation)
-  {
-    const vector<int> &intVec = p.first;        // Primeiro elemento do par (vector<int>)
-    const vector<double> &doubleVec = p.second; // Segundo elemento do par (vector<double>)
-
-    cout << "Par #" << index++ << ":" << endl;
-
-    // Imprimir vector<int>
-    cout << "  Vetor de inteiros: [";
-    for (size_t i = 0; i < intVec.size(); ++i)
-    {
-      cout << intVec[i];
-      if (i != intVec.size() - 1)
-        cout << ", ";
-    }
-    cout << "]" << endl;
-
-    // Imprimir vector<double>
-    cout << "  Vetor de doubles: [";
-    for (size_t i = 0; i < doubleVec.size(); ++i)
-    {
-      cout << doubleVec[i];
-      if (i != doubleVec.size() - 1)
-        cout << ", ";
-    }
-    cout << "]" << endl;
-  }
-}
-/**/
