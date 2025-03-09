@@ -24,9 +24,6 @@ Esse projeto desenvolve o algoritmo BRKGA (Baised Random Key Genetic Algorithm),
 # Clone o repositório
 git clone https://github.com/Filip3ra/Desenvolvimento_TCC.git
 
-# Acesse a pasta do projeto
-cd Desenvolvimento_TCC
-
 # Modifique a Main caso necessário
 
 Dentro do arquivo main.cpp é possível selecionar uma opção com um conjunto menor de instâncias para testes ou o conjunto completo de instâncias. 
