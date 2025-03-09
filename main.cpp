@@ -53,11 +53,14 @@ int main(int argc, char **argv)
   choice.first = choice_version;
   choice.second = 0; // Sem busca local por padrão
 
-  cout << "Deseja aplicar busca local?\n1 - Sim\n2 - Nao" << endl;
-  cin >> choice_localSearch;
-  if (choice_localSearch == 1)
+  if (choice_version != 5)
   {
-    choice.second = choice_localSearch;
+    cout << "Deseja aplicar busca local?\n1 - Sim\n2 - Nao" << endl;
+    cin >> choice_localSearch;
+    if (choice_localSearch == 1)
+    {
+      choice.second = choice_localSearch;
+    }
   }
 
   ofstream resultFile(outputFile);
