@@ -34,6 +34,7 @@ int main(int argc, char **argv)
       int generations = 514; // Número de gerações
     */
 
+  // Configuração para testes
   int executions = 1;    // Número de execuções
   int individuals = 100; // Quantidade de indivíduos
   int generations = 130; // Número de gerações
